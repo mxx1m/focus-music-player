@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carrier — focus mixer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F1EA;
+    --panel:#FFFFFF;
+    --panel-alt:#EDEAE1;
+    --border:#D8D2C4;
+    --text:#221F1A;
+    --text-dim:#6E6858;
+    --accent:#A8631F;
+    --accent-soft:rgba(168,99,31,0.16);
+    --accent-2:#37647D;
+    --danger:#A6432F;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#15181B;
+      --panel:#1C2024;
+      --panel-alt:#22262A;
+      --border:#2E3338;
+      --text:#EAE7DF;
+      --text-dim:#8D9298;
+      --accent:#E0A247;
+      --accent-soft:rgba(224,162,71,0.18);
+      --accent-2:#6FA3BE;
+      --danger:#D97F6B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15181B;
+    --panel:#1C2024;
+    --panel-alt:#22262A;
+    --border:#2E3338;
+    --text:#EAE7DF;
+    --text-dim:#8D9298;
+    --accent:#E0A247;
+    --accent-soft:rgba(224,162,71,0.18);
+    --accent-2:#6FA3BE;
+    --danger:#D97F6B;
+  }
+  html{ scroll-padding-top:env(safe-area-inset-top,0px); }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100%;
+  }
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace; }
+  .wrap{
+    max-width:600px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+  header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  h1{
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .subtitle{
+    color:var(--text-dim);
+    font-size:13px;
+    margin-top:2px;
+  }
+  .status{
+    font-size:12px;
+    color:var(--text-dim);
+    text-align:right;
+  }
+  .status.live{ color:var(--accent); }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:3px;
+    padding:18px 18px 20px;
+    margin-bottom:14px;
+  }
+  .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .panel-title{
+    font-size:13px;
+    font-weight:600;
+    color:var(--text-dim);
+  }
+  .row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .row:last-child{ margin-bottom:0; }
+  .row label{
+    font-size:13px;
+    color:var(--text-dim);
+    width:88px;
+    flex:0 0 auto;
+  }
+  .row .readout{
+    width:96px;
+    flex:0 0 auto;
+    text-align:right;
+    font-size:13px;
+  }
+  .row .band{
+    color:var(--accent);
+  }
+
+  input[type=range]{
+    -webkit-appearance:none;
+    appearance:none;
+    flex:1 1 auto;
+    height:4px;
+    border-radius:2px;
+    background:linear-gradient(to right, var(--accent) 0%, var(--accent) var(--fill,50%), var(--panel-alt) var(--fill,50%), var(--panel-alt) 100%);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:14px;
+    height:20px;
+    border-radius:2px;
+    background:var(--text);
+    border:1px solid var(--border);
+    cursor:pointer;
+    margin-top:-8px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:14px;
+    height:20px;
+    border-radius:2px;
+    background:var(--text);
+    border:1px solid var(--border);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-track{
+    height:4px;
+    border-radius:2px;
+    background:transparent;
+  }
+  input[type=range]:focus-visible::-webkit-slider-thumb{
+    outline:2px solid var(--accent-2);
+    outline-offset:2px;
+  }
+
+  .segmented{
+    display:flex;
+    border:1px solid var(--border);
+    border-radius:3px;
+    overflow:hidden;
+    flex:1 1 auto;
+  }
+  .segmented button{
+    flex:1 1 0;
+    padding:8px 10px;
+    font-size:13px;
+    font-family:inherit;
+    background:var(--panel);
+    color:var(--text-dim);
+    border:none;
+    border-right:1px solid var(--border);
+    cursor:pointer;
+  }
+  .segmented button:last-child{ border-right:none; }
+  .segmented button.active{
+    background:var(--accent-soft);
+    color:var(--text);
+    font-weight:600;
+  }
+  .segmented button:focus-visible{
+    outline:2px solid var(--accent-2);
+    outline-offset:-2px;
+  }
+
+  button, select{
+    font-family:inherit;
+    font-size:13px;
+    color:var(--text);
+    background:var(--panel-alt);
+    border:1px solid var(--border);
+    border-radius:3px;
+    padding:8px 12px;
+    cursor:pointer;
+  }
+  button:focus-visible, select:focus-visible, input:focus-visible{
+    outline:2px solid var(--accent-2);
+    outline-offset:2px;
+  }
+  button:hover{ border-color:var(--text-dim); }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#1A1204;
+    font-weight:600;
+  }
+  button.ghost{
+    background:transparent;
+    border-color:transparent;
+    color:var(--text-dim);
+    padding:4px 6px;
+  }
+  button:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+
+  .transport{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .transport button.primary{
+    width:64px;
+    font-size:15px;
+  }
+
+  canvas{
+    width:100%;
+    height:70px;
+    display:block;
+    border:1px solid var(--border);
+    border-radius:3px;
+    background:var(--panel-alt);
+  }
+
+  .tracklist{
+    list-style:none;
+    margin:0 0 12px;
+    padding:0;
+    border:1px solid var(--border);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .tracklist li{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px 10px;
+    font-size:13px;
+    border-bottom:1px solid var(--border);
+  }
+  .tracklist li:last-child{ border-bottom:none; }
+  .tracklist li.playing{ background:var(--accent-soft); }
+  .tracklist .name{
+    flex:1 1 auto;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .tracklist .mark{
+    width:14px;
+    color:var(--accent);
+    flex:0 0 auto;
+  }
+  .empty-hint{
+    font-size:13px;
+    color:var(--text-dim);
+    padding:14px 4px;
+    text-align:center;
+    border:1px dashed var(--border);
+    border-radius:3px;
+    margin-bottom:12px;
+  }
+
+  .note{
+    font-size:12px;
+    color:var(--text-dim);
+    line-height:1.5;
+    margin-top:12px;
+  }
+
+  .preset-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .preset-row select{ flex:1 1 auto; }
+
+  footer{
+    text-align:center;
+    color:var(--text-dim);
+    font-size:12px;
+    margin-top:8px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    * { scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Carrier</h1>
+      <div class="subtitle">Your own tracks, layered with a tuned tone</div>
+    </div>
+    <div class="status mono" id="statusLine">stopped</div>
+  </header>
+
+  <!-- MUSIC -->
+  <section class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Music</span>
+      <button id="addTracksBtn">+ Add tracks</button>
+      <input type="file" id="fileInput" accept="audio/*" multiple hidden>
+    </div>
+
+    <div id="emptyHint" class="empty-hint">No tracks loaded. Add audio files from your device to build a rotation.</div>
+    <ul class="tracklist" id="trackList" hidden></ul>
+
+    <div class="row">
+      <label for="musicVol">Volume</label>
+      <input type="range" id="musicVol" min="0" max="100" value="75">
+      <span class="readout mono" id="musicVolReadout">75%</span>
+    </div>
+  </section>
+
+  <!-- TONE -->
+  <section class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Tone</span>
+    </div>
+
+    <div class="row">
+      <label>Mode</label>
+      <div class="segmented" id="modeSeg">
+        <button data-mode="off">Off</button>
+        <button data-mode="binaural" class="active">Binaural</button>
+        <button data-mode="isochronic">Isochronic</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="carrier">Carrier</label>
+      <input type="range" id="carrier" min="80" max="400" step="1" value="200">
+      <span class="readout mono" id="carrierReadout">200 Hz</span>
+    </div>
+
+    <div class="row">
+      <label for="beat">Beat</label>
+      <input type="range" id="beat" min="0.5" max="40" step="0.5" value="10">
+      <span class="readout mono"><span id="beatReadout">10.0 Hz</span> <span class="band" id="bandReadout">alpha</span></span>
+    </div>
+
+    <div class="row" id="pulseShapeRow">
+      <label>Pulse</label>
+      <div class="segmented" id="pulseSeg">
+        <button data-pulse="smooth" class="active">Smooth</button>
+        <button data-pulse="sharp">Sharp</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <label for="toneVol">Volume</label>
+      <input type="range" id="toneVol" min="0" max="100" value="35">
+      <span class="readout mono" id="toneVolReadout">35%</span>
+    </div>
+
+    <div class="note">Binaural beats need stereo playback (headphones) — each ear gets a slightly different pitch and your brain perceives the gap as a pulse. Isochronic works on speakers too — it's one tone switching on and off at the target rate. Band names follow the usual EEG ranges; whether either style measurably affects focus is genuinely disputed, so treat this as a personal preference tool, not a proven intervention.</div>
+  </section>
+
+  <!-- OUTPUT / SESSION -->
+  <section class="panel">
+    <div class="panel-head">
+      <span class="panel-title">Session</span>
+    </div>
+
+    <canvas id="scope"></canvas>
+
+    <div class="row" style="margin-top:14px;">
+      <div class="transport">
+        <button class="primary" id="masterBtn">Play</button>
+      </div>
+      <label for="masterVol" style="margin-left:6px;">Master</label>
+      <input type="range" id="masterVol" min="0" max="100" value="80">
+      <span class="readout mono" id="masterVolReadout">80%</span>
+    </div>
+
+    <div class="row">
+      <label for="sessionLen">Auto-stop</label>
+      <input type="number" id="sessionLen" min="0" step="5" placeholder="continuous" style="width:96px; flex:0 0 auto; font-family:inherit; font-size:13px; padding:6px 8px; background:var(--panel-alt); border:1px solid var(--border); border-radius:3px; color:var(--text);">
+      <span class="readout mono" id="timerReadout" style="flex:1 1 auto;">minutes, blank = off</span>
+    </div>
+
+    <div class="row preset-row">
+      <label>Preset</label>
+      <select id="presetSelect"><option value="">— none —</option></select>
+      <button id="savePresetBtn" title="Save current settings as a preset">Save</button>
+      <button id="deletePresetBtn" class="ghost" title="Delete selected preset">Delete</button>
+    </div>
+    <div class="note">Presets store the tone and volume settings only. Track files can't be saved to a preset (the browser doesn't allow that) — you'll re-add those each session.</div>
+  </section>
+
+  <footer>Runs entirely in this browser tab. Nothing is uploaded anywhere.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- state ----------
+  var ctx = null;
+  var masterGain, musicGain, toneGain, toneOutput, analyser;
+  var audioEl = new Audio();
+  audioEl.crossOrigin = "anonymous";
+  var musicSourceNode = null;
+
+  var tracks = [];       // {name, url}
+  var currentTrackIdx = -1;
+  var isPlaying = false;
+
+  var toneNodes = null;  // holds active oscillator/lfo refs for teardown
+  var mode = "binaural";
+  var pulseShape = "smooth";
+
+  var timerHandle = null;
+  var timerEndAt = null;
+
+  var reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ---------- helpers ----------
+  function $(id){ return document.getElementById(id); }
+
+  function updateFill(el){
+    var min = parseFloat(el.min || 0), max = parseFloat(el.max || 100), val = parseFloat(el.value);
+    var pct = ((val - min) / (max - min)) * 100;
+    el.style.setProperty("--fill", pct + "%");
+  }
+
+  function bandFor(f){
+    if (f < 4) return "delta";
+    if (f < 8) return "theta";
+    if (f < 12) return "alpha";
+    if (f < 30) return "beta";
+    return "gamma";
+  }
+
+  function fmtTime(sec){
+    sec = Math.max(0, Math.round(sec));
+    var m = Math.floor(sec / 60), s = sec % 60;
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function setStatus(text, live){
+    var el = $("statusLine");
+    el.textContent = text;
+    el.classList.toggle("live", !!live);
+  }
+
+  // ---------- audio graph ----------
+  function ensureContext(){
+    if (ctx) return;
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = ctx.createGain();
+    musicGain = ctx.createGain();
+    toneGain = ctx.createGain();
+    toneOutput = ctx.createGain();
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+
+    musicGain.gain.value = parseFloat($("musicVol").value) / 100;
+    toneGain.gain.value = parseFloat($("toneVol").value) / 100;
+    masterGain.gain.value = parseFloat($("masterVol").value) / 100;
+    toneOutput.gain.value = 1;
+
+    toneOutput.connect(toneGain);
+    musicGain.connect(masterGain);
+    toneGain.connect(masterGain);
+    masterGain.connect(analyser);
+    analyser.connect(ctx.destination);
+
+    try {
+      musicSourceNode = ctx.createMediaElementSource(audioEl);
+      musicSourceNode.connect(musicGain);
+    } catch (e) {
+      // element already connected elsewhere; ignore
+    }
+
+    drawScope();
+  }
+
+  function buildTone(){
+    if (!ctx) return;
+    teardownTone();
+    if (mode === "off") return;
+
+    var carrierFreq = parseFloat($("carrier").value);
+    var beatFreq = parseFloat($("beat").value);
+    var now = ctx.currentTime;
+
+    if (mode === "binaural"){
+      var oscL = ctx.createOscillator();
+      var oscR = ctx.createOscillator();
+      oscL.type = "sine";
+      oscR.type = "sine";
+      oscL.frequency.value = carrierFreq - beatFreq / 2;
+      oscR.frequency.value = carrierFreq + beatFreq / 2;
+      var merger = ctx.createChannelMerger(2);
+      oscL.connect(merger, 0, 0);
+      oscR.connect(merger, 0, 1);
+      merger.connect(toneOutput);
+      oscL.start(now);
+      oscR.start(now);
+      toneNodes = { type: "binaural", oscL: oscL, oscR: oscR, merger: merger };
+    } else if (mode === "isochronic"){
+      var carrier = ctx.createOscillator();
+      carrier.type = "sine";
+      carrier.frequency.value = carrierFreq;
+
+      var lfo = ctx.createOscillator();
+      lfo.type = (pulseShape === "sharp") ? "square" : "sine";
+      lfo.frequency.value = beatFreq;
+
+      var lfoDepth = ctx.createGain();
+      lfoDepth.gain.value = 0.5;
+
+      var pulseGain = ctx.createGain();
+      pulseGain.gain.value = 0.5; // base offset so signal sits in 0..1
+
+      lfo.connect(lfoDepth);
+      lfoDepth.connect(pulseGain.gain);
+      carrier.connect(pulseGain);
+      pulseGain.connect(toneOutput);
+
+      carrier.start(now);
+      lfo.start(now);
+      toneNodes = { type: "isochronic", carrier: carrier, lfo: lfo, lfoDepth: lfoDepth, pulseGain: pulseGain };
+    }
+  }
+
+  function teardownTone(fast){
+    if (!toneNodes) return;
+    var stopAt = ctx.currentTime + (fast ? 0 : 0.05);
+    try {
+      if (toneNodes.type === "binaural"){
+        toneNodes.oscL.stop(stopAt);
+        toneNodes.oscR.stop(stopAt);
+      } else if (toneNodes.type === "isochronic"){
+        toneNodes.carrier.stop(stopAt);
+        toneNodes.lfo.stop(stopAt);
+      }
+    } catch(e) {}
+    toneNodes = null;
+  }
+
+  function updateToneFrequenciesLive(){
+    if (!toneNodes || !ctx) return;
+    var carrierFreq = parseFloat($("carrier").value);
+    var beatFreq = parseFloat($("beat").value);
+    var t = ctx.currentTime + 0.05;
+    if (toneNodes.type === "binaural"){
+      toneNodes.oscL.frequency.linearRampToValueAtTime(carrierFreq - beatFreq / 2, t);
+      toneNodes.oscR.frequency.linearRampToValueAtTime(carrierFreq + beatFreq / 2, t);
+    } else if (toneNodes.type === "isochronic"){
+      toneNodes.carrier.frequency.linearRampToValueAtTime(carrierFreq, t);
+      toneNodes.lfo.frequency.linearRampToValueAtTime(beatFreq, t);
+    }
+  }
+
+  // ---------- scope visualizer ----------
+  var scopeCanvas = $("scope");
+  var scopeCtx = scopeCanvas.getContext("2d");
+  var lastDraw = 0;
+
+  function resizeCanvas(){
+    var rect = scopeCanvas.getBoundingClientRect();
+    var dpr = window.devicePixelRatio || 1;
+    scopeCanvas.width = rect.width * dpr;
+    scopeCanvas.height = rect.height * dpr;
+    scopeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function drawScope(ts){
+    requestAnimationFrame(drawScope);
+    var throttle = reducedMotion ? 200 : 0;
+    if (ts && ts - lastDraw < throttle) return;
+    lastDraw = ts || 0;
+
+    var rect = scopeCanvas.getBoundingClientRect();
+    var w = rect.width, h = rect.height;
+    var styles = getComputedStyle(document.documentElement);
+    var accent = styles.getPropertyValue("--accent").trim() || "#E0A247";
+    var panelAlt = styles.getPropertyValue("--panel-alt").trim() || "#eee";
+
+    scopeCtx.clearRect(0, 0, w, h);
+    scopeCtx.fillStyle = panelAlt;
+    scopeCtx.fillRect(0, 0, w, h);
+
+    if (!ctx || !analyser || !isPlaying){
+      scopeCtx.strokeStyle = accent;
+      scopeCtx.globalAlpha = 0.25;
+      scopeCtx.beginPath();
+      scopeCtx.moveTo(0, h/2);
+      scopeCtx.lineTo(w, h/2);
+      scopeCtx.stroke();
+      scopeCtx.globalAlpha = 1;
+      return;
+    }
+
+    var data = new Uint8Array(analyser.fftSize);
+    analyser.getByteTimeDomainData(data);
+    scopeCtx.strokeStyle = accent;
+    scopeCtx.lineWidth = 1.5;
+    scopeCtx.beginPath();
+    var step = w / data.length;
+    for (var i = 0; i < data.length; i++){
+      var v = data[i] / 128.0 - 1.0;
+      var y = h/2 + v * (h/2 - 4);
+      var x = i * step;
+      if (i === 0) scopeCtx.moveTo(x, y); else scopeCtx.lineTo(x, y);
+    }
+    scopeCtx.stroke();
+  }
+
+  // ---------- tracklist ----------
+  function renderTracks(){
+    var list = $("trackList");
+    var empty = $("emptyHint");
+    if (tracks.length === 0){
+      list.hidden = true;
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+    list.hidden = false;
+    list.innerHTML = "";
+    tracks.forEach(function(t, i){
+      var li = document.createElement("li");
+      li.className = (i === currentTrackIdx) ? "playing" : "";
+      var mark = document.createElement("span");
+      mark.className = "mark mono";
+      mark.textContent = (i === currentTrackIdx && isPlaying) ? "▶" : "";
+      var name = document.createElement("span");
+      name.className = "name";
+      name.textContent = t.name;
+      name.onclick = function(){ selectTrack(i, true); };
+      var del = document.createElement("button");
+      del.className = "ghost";
+      del.textContent = "✕";
+      del.setAttribute("aria-label", "Remove " + t.name);
+      del.onclick = function(){ removeTrack(i); };
+      li.appendChild(mark);
+      li.appendChild(name);
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+  }
+
+  function selectTrack(i, autoplay){
+    if (i < 0 || i >= tracks.length) return;
+    currentTrackIdx = i;
+    audioEl.src = tracks[i].url;
+    renderTracks();
+    if (autoplay && isPlaying){
+      audioEl.play().catch(function(){});
+    }
+  }
+
+  function removeTrack(i){
+    var wasCurrent = (i === currentTrackIdx);
+    URL.revokeObjectURL(tracks[i].url);
+    tracks.splice(i, 1);
+    if (tracks.length === 0){
+      currentTrackIdx = -1;
+      audioEl.pause();
+      audioEl.removeAttribute("src");
+    } else if (wasCurrent){
+      currentTrackIdx = Math.min(i, tracks.length - 1);
+      selectTrack(currentTrackIdx, isPlaying);
+    } else if (i < currentTrackIdx){
+      currentTrackIdx--;
+    }
+    renderTracks();
+  }
+
+  audioEl.addEventListener("ended", function(){
+    if (tracks.length === 0) return;
+    var next = (currentTrackIdx + 1) % tracks.length;
+    selectTrack(next, true);
+  });
+
+  $("fileInput").addEventListener("change", function(e){
+    var files = Array.prototype.slice.call(e.target.files || []);
+    files.forEach(function(f){
+      var url = URL.createObjectURL(f);
+      tracks.push({ name: f.name, url: url });
+    });
+    if (currentTrackIdx === -1 && tracks.length > 0){
+      selectTrack(0, false);
+    } else {
+      renderTracks();
+    }
+    e.target.value = "";
+  });
+
+  $("addTracksBtn").addEventListener("click", function(){
+    $("fileInput").click();
+  });
+
+  // ---------- controls ----------
+  function bindSlider(id, onInput){
+    var el = $(id);
+    updateFill(el);
+    el.addEventListener("input", function(){
+      updateFill(el);
+      onInput(parseFloat(el.value));
+      saveLastState();
+    });
+  }
+
+  bindSlider("musicVol", function(v){
+    $("musicVolReadout").textContent = Math.round(v) + "%";
+    if (musicGain) musicGain.gain.value = v / 100;
+  });
+
+  bindSlider("toneVol", function(v){
+    $("toneVolReadout").textContent = Math.round(v) + "%";
+    if (toneGain) toneGain.gain.value = v / 100;
+  });
+
+  bindSlider("masterVol", function(v){
+    $("masterVolReadout").textContent = Math.round(v) + "%";
+    if (masterGain) masterGain.gain.value = v / 100;
+  });
+
+  bindSlider("carrier", function(v){
+    $("carrierReadout").textContent = Math.round(v) + " Hz";
+    updateToneFrequenciesLive();
+  });
+
+  bindSlider("beat", function(v){
+    $("beatReadout").textContent = v.toFixed(1) + " Hz";
+    $("bandReadout").textContent = bandFor(v);
+    updateToneFrequenciesLive();
+  });
+
+  $("modeSeg").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-mode]");
+    if (!btn) return;
+    mode = btn.getAttribute("data-mode");
+    Array.prototype.forEach.call($("modeSeg").children, function(b){
+      b.classList.toggle("active", b === btn);
+    });
+    $("pulseShapeRow").style.display = (mode === "isochronic") ? "flex" : "none";
+    if (isPlaying) buildTone();
+    saveLastState();
+  });
+
+  $("pulseSeg").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-pulse]");
+    if (!btn) return;
+    pulseShape = btn.getAttribute("data-pulse");
+    Array.prototype.forEach.call($("pulseSeg").children, function(b){
+      b.classList.toggle("active", b === btn);
+    });
+    if (isPlaying && mode === "isochronic") buildTone();
+    saveLastState();
+  });
+
+  // ---------- transport ----------
+  function play(){
+    ensureContext();
+    if (ctx.state === "suspended") ctx.resume();
+    if (tracks.length > 0 && currentTrackIdx === -1) selectTrack(0, false);
+    if (currentTrackIdx !== -1) audioEl.play().catch(function(){});
+    buildTone();
+    isPlaying = true;
+    $("masterBtn").textContent = "Pause";
+    setStatus("playing", true);
+    renderTracks();
+    scheduleTimerIfSet();
+  }
+
+  function stop(){
+    audioEl.pause();
+    teardownTone();
+    isPlaying = false;
+    $("masterBtn").textContent = "Play";
+    setStatus("stopped", false);
+    renderTracks();
+    clearTimer();
+  }
+
+  $("masterBtn").addEventListener("click", function(){
+    if (isPlaying) stop(); else play();
+  });
+
+  // ---------- session timer ----------
+  function scheduleTimerIfSet(){
+    clearTimer();
+    var minutes = parseFloat($("sessionLen").value);
+    if (!minutes || minutes <= 0) {
+      $("timerReadout").textContent = "minutes, blank = off";
+      return;
+    }
+    timerEndAt = Date.now() + minutes * 60000;
+    timerHandle = setInterval(tickTimer, 500);
+    tickTimer();
+  }
+
+  function tickTimer(){
+    if (!timerEndAt) return;
+    var remaining = (timerEndAt - Date.now()) / 1000;
+    if (remaining <= 0){
+      $("timerReadout").textContent = "session complete";
+      fadeOutAndStop();
+      return;
+    }
+    $("timerReadout").textContent = fmtTime(remaining) + " remaining";
+  }
+
+  function clearTimer(){
+    if (timerHandle) clearInterval(timerHandle);
+    timerHandle = null;
+    timerEndAt = null;
+    if (!isPlaying) $("timerReadout").textContent = "minutes, blank = off";
+  }
+
+  function fadeOutAndStop(){
+    if (!ctx) { stop(); return; }
+    var now = ctx.currentTime;
+    masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+    masterGain.gain.linearRampToValueAtTime(0.0001, now + 4);
+    setTimeout(function(){
+      stop();
+      masterGain.gain.value = parseFloat($("masterVol").value) / 100;
+    }, 4200);
+    setStatus("fading out", true);
+  }
+
+  // ---------- presets ----------
+  function currentSettings(){
+    return {
+      mode: mode,
+      pulseShape: pulseShape,
+      carrier: $("carrier").value,
+      beat: $("beat").value,
+      toneVol: $("toneVol").value,
+      musicVol: $("musicVol").value,
+      masterVol: $("masterVol").value,
+      sessionLen: $("sessionLen").value
+    };
+  }
+
+  function applySettings(s){
+    if (!s) return;
+    mode = s.mode || "binaural";
+    pulseShape = s.pulseShape || "smooth";
+    $("carrier").value = s.carrier || 200;
+    $("beat").value = s.beat || 10;
+    $("toneVol").value = (s.toneVol != null) ? s.toneVol : 35;
+    $("musicVol").value = (s.musicVol != null) ? s.musicVol : 75;
+    $("masterVol").value = (s.masterVol != null) ? s.masterVol : 80;
+    $("sessionLen").value = s.sessionLen || "";
+
+    Array.prototype.forEach.call($("modeSeg").children, function(b){
+      b.classList.toggle("active", b.getAttribute("data-mode") === mode);
+    });
+    Array.prototype.forEach.call($("pulseSeg").children, function(b){
+      b.classList.toggle("active", b.getAttribute("data-pulse") === pulseShape);
+    });
+    $("pulseShapeRow").style.display = (mode === "isochronic") ? "flex" : "none";
+
+    ["carrier","beat","toneVol","musicVol","masterVol"].forEach(function(id){ updateFill($(id)); });
+    $("carrierReadout").textContent = Math.round(parseFloat($("carrier").value)) + " Hz";
+    $("beatReadout").textContent = parseFloat($("beat").value).toFixed(1) + " Hz";
+    $("bandReadout").textContent = bandFor(parseFloat($("beat").value));
+    $("toneVolReadout").textContent = Math.round(parseFloat($("toneVol").value)) + "%";
+    $("musicVolReadout").textContent = Math.round(parseFloat($("musicVol").value)) + "%";
+    $("masterVolReadout").textContent = Math.round(parseFloat($("masterVol").value)) + "%";
+
+    if (musicGain) musicGain.gain.value = parseFloat($("musicVol").value) / 100;
+    if (toneGain) toneGain.gain.value = parseFloat($("toneVol").value) / 100;
+    if (masterGain) masterGain.gain.value = parseFloat($("masterVol").value) / 100;
+    if (isPlaying) buildTone();
+  }
+
+  function loadPresets(){
+    try {
+      var raw = localStorage.getItem("carrier.presets");
+      return raw ? JSON.parse(raw) : [];
+    } catch(e){ return []; }
+  }
+
+  function savePresets(list){
+    try { localStorage.setItem("carrier.presets", JSON.stringify(list)); } catch(e){}
+  }
+
+  function renderPresetOptions(){
+    var sel = $("presetSelect");
+    var list = loadPresets();
+    sel.innerHTML = '<option value="">— none —</option>';
+    list.forEach(function(p, i){
+      var opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = p.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  $("savePresetBtn").addEventListener("click", function(){
+    var name = prompt("Name this preset:");
+    if (!name) return;
+    var list = loadPresets();
+    list.push({ name: name, settings: currentSettings() });
+    savePresets(list);
+    renderPresetOptions();
+    $("presetSelect").value = String(list.length - 1);
+  });
+
+  $("deletePresetBtn").addEventListener("click", function(){
+    var idx = $("presetSelect").value;
+    if (idx === "") return;
+    var list = loadPresets();
+    list.splice(parseInt(idx, 10), 1);
+    savePresets(list);
+    renderPresetOptions();
+  });
+
+  $("presetSelect").addEventListener("change", function(){
+    var idx = this.value;
+    if (idx === "") return;
+    var list = loadPresets();
+    var p = list[parseInt(idx, 10)];
+    if (p) applySettings(p.settings);
+    saveLastState();
+  });
+
+  // ---------- last-state persistence ----------
+  function saveLastState(){
+    try { localStorage.setItem("carrier.lastState", JSON.stringify(currentSettings())); } catch(e){}
+  }
+
+  function loadLastState(){
+    try {
+      var raw = localStorage.getItem("carrier.lastState");
+      if (raw) applySettings(JSON.parse(raw));
+    } catch(e){}
+  }
+
+  $("sessionLen").addEventListener("input", saveLastState);
+
+  // ---------- init ----------
+  renderTracks();
+  renderPresetOptions();
+  loadLastState();
+  setStatus("stopped", false);
+  requestAnimationFrame(drawScope);
+
+})();
+</script>
+</body>
+</html>
