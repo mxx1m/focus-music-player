@@ -119,31 +119,36 @@ img{max-width:100%}
 .dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:50;display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:5px;border-radius:27px;background:var(--glass);-webkit-backdrop-filter:saturate(200%) blur(26px);backdrop-filter:saturate(200%) blur(26px);border:1px solid var(--glass-edge);box-shadow:0 12px 34px -6px var(--glass-shadow),inset 0 1px 0 var(--glass-hi)}
 .dock-thumb{position:absolute;z-index:0;top:5px;bottom:5px;left:5px;width:calc((100% - 13px) / 2);border-radius:22px;background:var(--accent);box-shadow:0 4px 14px -4px var(--accent),inset 0 1px 0 rgba(255,255,255,.28);transition:transform .45s cubic-bezier(.34,1.45,.5,1)}
 .dock[data-active="library"] .dock-thumb{transform:translateX(calc(100% + 3px))}
-.tab{position:relative;z-index:1;min-width:112px;min-height:44px;border:0;background:none;border-radius:22px;padding:0 16px;display:flex;align-items:center;justify-content:center;gap:7px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:color .25s}
+.tab{position:relative;z-index:1;min-width:112px;min-height:44px;border:0;background:none;border-radius:22px;padding:0 18px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;transition:color .25s}
 .tab svg{width:18px;height:18px;flex:none}
 .tab[aria-selected="true"]{color:var(--accent-fg)}
 .tab:focus-visible{outline-offset:-3px}
-.count{font:500 11px/1 var(--font-mono);background:var(--surface-2);color:var(--muted);border-radius:999px;padding:3px 6px;min-width:20px;text-align:center;transition:background .25s,color .25s}
-.tab[aria-selected="true"] .count{background:var(--accent-fg);color:var(--accent)}
 @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
   .dock,.mini{background:var(--surface)}
   .top{background:var(--bg)}
 }
 
-/* Console */
+/* Console: two equal-height panels side by side on wide screens */
 .console{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
-@media (min-width:900px){.console{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:start}}
+@media (min-width:900px){.console{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px;flex-wrap:wrap}
 .eyebrow{font:500 11px/1.2 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 
-/* Music deck */
+/* Music deck: three groups, spread over the panel's height */
+.deck{justify-content:space-between}
+.deck .panel-head{justify-content:center}
+.group{display:flex;flex-direction:column;gap:16px;min-width:0}
 .np{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0}
 .np-title{font:700 clamp(22px,3vw,30px)/1.15 var(--font-display);letter-spacing:-.015em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
 .np-sub{color:var(--muted);font-size:14px}
 .np-empty{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:14px}
+.np .seg{margin-top:8px}
 .seek{display:flex;flex-direction:column;gap:2px}
 .times{display:flex;justify-content:space-between;font:400 12px var(--font-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
 .transport{display:flex;align-items:center;justify-content:center;gap:clamp(4px,2vw,14px)}
+.tone-only .seek,.tone-only .side{visibility:hidden}
+@media (max-width:899px){.tone-only .seek{display:none}}
 .icon-btn{position:relative;width:44px;height:44px;border-radius:50%;border:0;background:transparent;display:grid;place-items:center;cursor:pointer;color:var(--fg);flex:none}
 .icon-btn svg{width:24px;height:24px}
 .icon-btn:hover{background:var(--surface-2)}
@@ -154,6 +159,17 @@ img{max-width:100%}
 .play{width:66px;height:66px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;cursor:pointer;flex:none;box-shadow:0 6px 18px -8px var(--accent)}
 .play svg{width:30px;height:30px}
 .play:active{transform:scale(.97)}
+
+/* Focus timer */
+.timer{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:16px}
+.timer-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.timer-head .lbl{font-weight:600;font-size:14px}
+.timer-read{font:500 22px/1 var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.timer.is-off .timer-read{font:500 13px/1.4 var(--font-mono);letter-spacing:0;color:var(--muted)}
+.timer.is-running .timer-read{color:var(--accent)}
+.timer-track{height:4px;border-radius:2px;background:var(--surface-2);overflow:hidden}
+.timer-track i{display:block;height:100%;width:0;background:var(--accent);border-radius:2px;transition:width .3s linear}
+.seg.full{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
 
 .mixer{display:flex;flex-direction:column;gap:8px;border-top:1px solid var(--line);padding-top:16px}
 .mix-row{display:grid;grid-template-columns:56px minmax(0,1fr) 40px;align-items:center;gap:12px}
@@ -170,11 +186,12 @@ input[type="range"]::-moz-range-track{height:6px;border-radius:3px;background:va
 input[type="range"]::-moz-range-progress{height:6px;border-radius:3px;background:var(--accent)}
 input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}
 
-/* Tone generator */
-.gen-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* Segmented controls */
 .seg{display:inline-flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px}
-.seg button{border:0;background:transparent;border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer}
+.seg button{border:0;background:transparent;border-radius:8px;padding:7px 12px;font-weight:600;font-size:13px;color:var(--muted);cursor:pointer;white-space:nowrap}
 .seg button[aria-checked="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+
+/* Tone generator */
 .screen{background:var(--screen);border-radius:10px;padding:10px 12px 8px;display:flex;flex-direction:column;gap:6px}
 #scope{display:block;width:100%;height:118px}
 .screen-cap{display:flex;justify-content:space-between;gap:8px;font:400 11px/1.3 var(--font-mono);color:var(--screen-dim)}
@@ -205,9 +222,9 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 .carrier-val{display:inline-flex;align-items:baseline;gap:10px}
 .opt{display:flex;align-items:center;justify-content:space-between;gap:10px 14px;flex-wrap:wrap}
 .opt .lbl{font-weight:600;font-size:14px}
-.opt-note{flex-basis:100%}
 .hint{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border-radius:10px;padding:10px 12px}
 .hint svg{width:18px;height:18px;flex:none;margin-top:1px;color:var(--muted)}
+@media (min-width:900px){.gen .hint{margin-top:auto}}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;font-weight:600;font-size:14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);white-space:nowrap}
@@ -262,13 +279,13 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 
 @media (max-width:420px){
   .panel{padding:16px}
-  .tab{min-width:104px}
+  .tab{min-width:108px}
   .big{font-size:40px}
 }
 @media (prefers-reduced-motion: reduce){
   .is-playing .eq i{animation:none;height:70%}
   .play:active{transform:none}
-  .dock-thumb,.tab,.count{transition:none}
+  .dock-thumb,.tab,.timer-track i{transition:none}
 }
 </style>
 
@@ -285,58 +302,84 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     <section id="view-player" role="tabpanel" aria-labelledby="tab-player">
       <div class="console">
         <div class="panel deck">
-          <div class="np">
-            <div class="eyebrow">Now playing</div>
-            <h1 class="np-title" id="np-title">No track loaded</h1>
-            <div class="np-sub" id="np-sub">Tone off</div>
-          </div>
-          <div class="np-empty" id="np-empty" hidden>
-            <span>Your library is empty.</span>
-            <button class="btn small primary" type="button" data-add>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              Add tracks
-            </button>
-          </div>
-          <div class="seek">
-            <input type="range" id="seek" min="0" max="1000" step="1" value="0" aria-label="Position in track" disabled>
-            <div class="times"><span id="t-cur">0:00</span><span id="t-dur">0:00</span></div>
-          </div>
-          <div class="transport">
-            <button class="icon-btn toggle" id="btn-shuffle" type="button" aria-pressed="false" aria-label="Shuffle">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h2.5c2 0 3.2 1 4.3 2.8l2.4 4.4c1.1 1.8 2.3 2.8 4.3 2.8H20M4 17h2.5c1.3 0 2.3-.4 3.1-1.2M14.4 8.2C15.2 7.4 16.2 7 17.5 7H20M17.5 4.5 20 7l-2.5 2.5M17.5 14.5 20 17l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="icon-btn" id="btn-prev" type="button" aria-label="Previous track">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.2 9.6 12l8.4 5.8zM8 6H5.8v12H8z" fill="currentColor"/></svg>
-            </button>
-            <button class="play" id="btn-play" type="button" aria-label="Play">
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause" hidden><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
-            </button>
-            <button class="icon-btn" id="btn-next" type="button" aria-label="Next track">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6.2 14.4 12 6 17.8zM16 6h2.2v12H16z" fill="currentColor"/></svg>
-            </button>
-            <button class="icon-btn toggle" id="btn-repeat" type="button" aria-pressed="false" aria-label="Repeat: all">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3.5 19.5 6 17 8.5M4.5 11V9a3 3 0 0 1 3-3h12M7 20.5 4.5 18 7 15.5M19.5 13v2a3 3 0 0 1-3 3h-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="badge" id="repeat-badge" hidden>1</span>
-            </button>
-          </div>
-          <div class="mixer">
-            <div class="mix-row" id="row-music">
-              <label class="lbl" for="vol-music">Music</label>
-              <input type="range" id="vol-music" min="0" max="100" step="1" value="80">
-              <output id="out-music" for="vol-music">80</output>
+          <div class="group">
+            <div class="panel-head"><div class="eyebrow">Now playing</div></div>
+            <div class="np">
+              <h1 class="np-title" id="np-title">No track loaded</h1>
+              <div class="np-sub" id="np-sub">Tone off</div>
+              <div class="np-empty" id="np-empty" hidden>
+                <span>Your library is empty.</span>
+                <button class="btn small primary" type="button" data-add>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  Add tracks
+                </button>
+              </div>
+              <div class="seg" role="radiogroup" aria-label="What to play" id="source">
+                <button type="button" role="radio" data-source="music" aria-checked="true">With music</button>
+                <button type="button" role="radio" data-source="tone" aria-checked="false">Tone only</button>
+              </div>
             </div>
-            <div class="mix-row">
-              <label class="lbl" for="vol-tone">Tone</label>
-              <input type="range" id="vol-tone" min="0" max="100" step="1" value="35">
-              <output id="out-tone" for="vol-tone">35</output>
+          </div>
+
+          <div class="group">
+            <div class="seek">
+              <input type="range" id="seek" min="0" max="1000" step="1" value="0" aria-label="Position in track" disabled>
+              <div class="times"><span id="t-cur">0:00</span><span id="t-dur">0:00</span></div>
             </div>
-            <p class="note" id="ios-note" hidden>On iPhone, the side buttons set the overall volume. The tone slider sets how loud the tone is relative to the music.</p>
+            <div class="transport">
+              <button class="icon-btn toggle side" id="btn-shuffle" type="button" aria-pressed="false" aria-label="Shuffle">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h2.5c2 0 3.2 1 4.3 2.8l2.4 4.4c1.1 1.8 2.3 2.8 4.3 2.8H20M4 17h2.5c1.3 0 2.3-.4 3.1-1.2M14.4 8.2C15.2 7.4 16.2 7 17.5 7H20M17.5 4.5 20 7l-2.5 2.5M17.5 14.5 20 17l-2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <button class="icon-btn side" id="btn-prev" type="button" aria-label="Previous track">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6.2 9.6 12l8.4 5.8zM8 6H5.8v12H8z" fill="currentColor"/></svg>
+              </button>
+              <button class="play" id="btn-play" type="button" aria-label="Play">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="i-play"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="i-pause" hidden><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+              </button>
+              <button class="icon-btn side" id="btn-next" type="button" aria-label="Next track">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6.2 14.4 12 6 17.8zM16 6h2.2v12H16z" fill="currentColor"/></svg>
+              </button>
+              <button class="icon-btn toggle side" id="btn-repeat" type="button" aria-pressed="false" aria-label="Repeat: all">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 3.5 19.5 6 17 8.5M4.5 11V9a3 3 0 0 1 3-3h12M7 20.5 4.5 18 7 15.5M19.5 13v2a3 3 0 0 1-3 3h-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="badge" id="repeat-badge" hidden>1</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="group">
+            <div class="timer is-off" id="timer">
+              <div class="timer-head">
+                <span class="lbl" id="timer-lbl">Focus timer</span>
+                <span class="timer-read" id="timer-read" aria-live="off">Off</span>
+              </div>
+              <div class="timer-track" aria-hidden="true"><i id="timer-fill"></i></div>
+              <div class="seg full" role="radiogroup" aria-labelledby="timer-lbl" id="timer-len">
+                <button type="button" role="radio" data-min="0" aria-checked="true">Off</button>
+                <button type="button" role="radio" data-min="25" aria-checked="false">25 min</button>
+                <button type="button" role="radio" data-min="50" aria-checked="false">50 min</button>
+                <button type="button" role="radio" data-min="90" aria-checked="false">90 min</button>
+              </div>
+              <p class="note" id="timer-note">Plays until you stop it.</p>
+            </div>
+            <div class="mixer">
+              <div class="mix-row" id="row-music">
+                <label class="lbl" for="vol-music">Music</label>
+                <input type="range" id="vol-music" min="0" max="100" step="1" value="80">
+                <output id="out-music" for="vol-music">80</output>
+              </div>
+              <div class="mix-row">
+                <label class="lbl" for="vol-tone">Tone</label>
+                <input type="range" id="vol-tone" min="0" max="100" step="1" value="59">
+                <output id="out-tone" for="vol-tone">59</output>
+              </div>
+              <p class="note" id="ios-note" hidden>On iPhone, the side buttons set the music volume. The tone slider sets how loud the tone is relative to the music.</p>
+            </div>
           </div>
         </div>
 
         <div class="panel gen">
-          <div class="gen-head">
+          <div class="panel-head">
             <div class="eyebrow">Tone generator</div>
             <div class="seg" role="radiogroup" aria-label="Tone type" id="mode">
               <button type="button" role="radio" data-mode="off" aria-checked="false">Off</button>
@@ -375,14 +418,6 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
               <button type="button" role="radio" data-pulse="smooth" aria-checked="true">Smooth</button>
               <button type="button" role="radio" data-pulse="sharp" aria-checked="false">Sharp</button>
             </div>
-          </div>
-          <div class="opt" id="opt-engine" hidden>
-            <span class="lbl" id="engine-lbl">When the screen locks</span>
-            <div class="seg" role="radiogroup" aria-labelledby="engine-lbl" id="engine">
-              <button type="button" role="radio" data-engine="lockproof" aria-checked="true">Keep playing</button>
-              <button type="button" role="radio" data-engine="gapless" aria-checked="false">Gapless</button>
-            </div>
-            <p class="note opt-note" id="engine-note"></p>
           </div>
           <div class="hint">
             <svg viewBox="0 0 24 24" aria-hidden="true" id="hint-phones" hidden><path d="M4 15v-3a8 8 0 0 1 16 0v3M4 15h3v5H5a1 1 0 0 1-1-1zM20 15h-3v5h2a1 1 0 0 0 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
@@ -431,7 +466,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   </button>
   <button class="tab" role="tab" id="tab-library" aria-controls="view-library" aria-selected="false" type="button">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-    Library <span class="count" id="lib-count">0</span>
+    Library
   </button>
 </nav>
 
@@ -454,7 +489,6 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 <input type="file" id="file-input" class="vh" accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.aif,.aiff,.ogg,.opus" multiple tabindex="-1" aria-hidden="true">
 <audio id="music" preload="auto"></audio>
-<audio id="tone" preload="auto" loop></audio>
 
 <script>
 (function () {
@@ -462,6 +496,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 
   /* ---------- helpers ---------- */
   var $ = function (s, r) { return (r || document).querySelector(s); };
+  var each = function (root, sel, fn) { Array.prototype.forEach.call(root.querySelectorAll(sel), fn); };
   var LS = 'focusplayer.';
   var store = {
     get: function (k, d) { try { var v = localStorage.getItem(LS + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
@@ -483,7 +518,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   }
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   function cleanName(n) { return n.replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_]+/g, ' ').trim() || 'Untitled'; }
-  function gain(v) { var x = clamp(v, 0, 100) / 100; return x * x; }
+  function gain(v) { var x = clamp(v, 0, 100) / 100; return x * x; } // music slider taper (Mac)
   function setFill(input) {
     var min = num(input.min, 0), max = num(input.max, 100), v = num(input.value, 0);
     input.style.setProperty('--p', ((v - min) / (max - min || 1) * 100) + '%');
@@ -500,14 +535,36 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   ];
   function bandFor(f) { for (var i = 0; i < BANDS.length; i++) { if (f < BANDS[i].hi) return BANDS[i]; } return BANDS[BANDS.length - 1]; }
   var MODES = { off: 'Off', binaural: 'Binaural', isochronic: 'Isochronic' };
-  // iPhone "Keep playing" mode plays a pre-rendered loop through an audio element, which survives a locked screen.
-  // 300 s at 16 kHz: every allowed frequency (0.25 Hz steps) completes whole cycles, so the loop is sample-continuous.
-  // The audio element still pauses briefly when it jumps back to the start, so the loop is long to make that rare.
-  var SR_LOOP = 16000;
-  var LOOP = 300;
   var DEFAULT_CARRIER = 150;
 
+  // Hearing safety
+  var TONE_MAX = 0.25;   // tone peak at slider 100: -12 dB below full scale
+  var FADE_IN = 2;       // seconds, every time the tone starts
+  var FADE_OUT = 0.3;    // seconds, on pause
+  var END_FADE = 10;     // seconds, at the end of a focus session
+  function toneAmp(v) { var x = clamp(v, 0, 100) / 100; return TONE_MAX * x * x; }
+  // A-weighting (IEC 61672): how strongly the ear, and hearing-damage limits, count each frequency.
+  function aWeight(f) {
+    var f2 = f * f;
+    var ra = (148693636 * f2 * f2) / ((f2 + 424.36) * Math.sqrt((f2 + 11599.29) * (f2 + 544496.41)) * (f2 + 148693636));
+    return 20 * Math.log10(ra) + 2.0;
+  }
+  var A_REF = aWeight(DEFAULT_CARRIER);
+  // Higher carriers count more, so they are turned down to keep the same weighted level as 150 Hz. Never boosted.
+  function carrierComp(f) { return Math.pow(10, Math.min(0, A_REF - aWeight(f)) / 20); }
+
+  // iPhone and iPad ignore the volume of audio elements; only the side buttons change it.
+  var isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Mac/.test(navigator.platform || '') && navigator.maxTouchPoints > 1);
+  var canSetVolume = !isIOS;
+
   /* ---------- state ---------- */
+  function initialToneLevel() {
+    var v = store.get('toneLevel', null);
+    if (v !== null) return clamp(Math.round(num(v, 59)), 0, 100);
+    var old = store.get('volTone', null); // earlier versions peaked at 0.7; convert so the tone sounds the same, capped at the new maximum
+    if (old !== null) return Math.min(100, Math.round(clamp(num(old, 35), 0, 100) * Math.sqrt(0.7 / TONE_MAX)));
+    return 59;
+  }
   var state = {
     tracks: [],
     urls: new Map(),
@@ -519,40 +576,42 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     beat: Math.round(clamp(num(store.get('beat', 10), 10), 0.5, 40) * 2) / 2,
     carrier: Math.round(clamp(num(store.get('carrier', DEFAULT_CARRIER), DEFAULT_CARRIER), 80, 500)),
     volMusic: clamp(num(store.get('volMusic', 80), 80), 0, 100),
-    volTone: clamp(num(store.get('volTone', 35), 35), 0, 100),
+    toneLevel: initialToneLevel(),
     pulse: store.get('pulse', 'smooth') === 'sharp' ? 'sharp' : 'smooth',
-    iosEngine: store.get('iosEngine', 'lockproof') === 'gapless' ? 'gapless' : 'lockproof',
+    musicOn: store.get('musicOn', true) !== false,
     playing: false,
     tab: store.get('tab', 'player') === 'library' ? 'library' : 'player'
   };
+  store.set('toneLevel', state.toneLevel);
   var dbFailed = false;
 
+  var TIMER_CHOICES = [0, 25, 50, 90];
+  var timerMin = num(store.get('timerMin', 0), 0);
+  if (TIMER_CHOICES.indexOf(timerMin) < 0) timerMin = 0;
+  var timer = { min: timerMin, remaining: timerMin * 60, running: false, last: 0, iv: 0, fading: false, done: false, shown: -1 };
+
   var els = {
-    music: $('#music'), tone: $('#tone'),
+    music: $('#music'),
     play: $('#btn-play'), prev: $('#btn-prev'), next: $('#btn-next'),
     shuffle: $('#btn-shuffle'), repeat: $('#btn-repeat'), repeatBadge: $('#repeat-badge'),
     seek: $('#seek'), tCur: $('#t-cur'), tDur: $('#t-dur'),
-    npTitle: $('#np-title'), npSub: $('#np-sub'), npEmpty: $('#np-empty'),
+    npTitle: $('#np-title'), npSub: $('#np-sub'), npEmpty: $('#np-empty'), source: $('#source'),
     volMusic: $('#vol-music'), volTone: $('#vol-tone'), outMusic: $('#out-music'), outTone: $('#out-tone'),
     rowMusic: $('#row-music'), iosNote: $('#ios-note'),
+    timer: $('#timer'), timerRead: $('#timer-read'), timerFill: $('#timer-fill'), timerLen: $('#timer-len'), timerNote: $('#timer-note'),
     mode: $('#mode'), bands: $('#bands'), beat: $('#beat'), carrier: $('#carrier'),
     outBeat: $('#out-beat'), outCarrier: $('#out-carrier'), carrierReset: $('#carrier-reset'),
     beatBig: $('#beat-big'), beatLbl: $('#beat-lbl'), carrierOut: $('#carrier-out'),
     modeHint: $('#mode-hint'), scope: $('#scope'), scopeCap: $('#scope-cap'),
-    pulse: $('#pulse'), optPulse: $('#opt-pulse'), engine: $('#engine'), optEngine: $('#opt-engine'), engineNote: $('#engine-note'), dock: $('#dock'),
-    tabPlayer: $('#tab-player'), tabLibrary: $('#tab-library'), libCount: $('#lib-count'),
+    pulse: $('#pulse'), optPulse: $('#opt-pulse'), dock: $('#dock'),
+    tabPlayer: $('#tab-player'), tabLibrary: $('#tab-library'),
     viewPlayer: $('#view-player'), viewLibrary: $('#view-library'),
     file: $('#file-input'), drop: $('#drop'), status: $('#status'), filter: $('#filter'),
     list: $('#tracks'), libEmpty: $('#lib-empty'), libMeta: $('#lib-meta'),
     mini: $('#mini'), miniTitle: $('#mini-title'), miniSub: $('#mini-sub'), miniPlay: $('#mini-play'), miniNext: $('#mini-next'),
     toast: $('#toast')
   };
-
-  // iPhone and iPad ignore the volume property of audio elements: reading it back always returns 1.
-  var canSetVolume = (function () { try { var a = document.createElement('audio'); a.volume = 0.5; return Math.abs(a.volume - 0.5) < 0.01; } catch (e) { return false; } })();
-
-  var ignorePauseUntil = 0;
-  function ignorePause() { ignorePauseUntil = performance.now() + 600; }
+  var ARTWORK = [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }];
 
   var toastTimer = 0;
   function toast(msg) {
@@ -660,8 +719,11 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     });
     return chain.then(function () {
       rebuildOrder();
-      if (!state.currentId && added.length) setTrack(sortedTracks()[0].id);
-      renderList(); renderNowPlaying(); updateStorageInfo();
+      if (!state.currentId && added.length) {
+        setTrack(sortedTracks()[0].id);
+        if (state.playing && leader === 'track') safePlay(els.music);
+      }
+      renderList(); renderNowPlaying(); updateStorageInfo(); updateMediaSession();
       if (added.length && navigator.storage && navigator.storage.persist) { navigator.storage.persist().catch(function () {}); }
       var msg = added.length ? 'Added ' + added.length + (added.length === 1 ? ' track.' : ' tracks.') : 'No tracks were added.';
       if (problems.length) showStatus(msg, problems);
@@ -680,23 +742,22 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       state.tracks = state.tracks.filter(function (t) { return t.id !== id; });
       var url = state.urls.get(id);
       state.urls.delete(id);
+      if (resume && resume.id === id) resume = null;
       rebuildOrder();
       if (wasCurrent) {
         if (nextId) {
-          var resume = state.playing;
           setTrack(nextId);
-          if (resume) safePlay(els.music);
+          if (state.playing && leader === 'track') safePlay(els.music);
         } else {
-          ignorePause();
-          els.music.pause();
-          els.music.removeAttribute('src');
-          try { els.music.load(); } catch (e) {}
           state.currentId = null; store.set('currentId', null);
-          if (state.mode === 'off') pauseAll();
+          if (leader === 'track') {
+            if (state.playing && state.mode !== 'off') { loadSilence(); safePlay(els.music); } // keep the tone going
+            else { if (state.playing) pauseAll(); unloadLeader(); }
+          }
         }
       }
       if (url) setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      renderList(); renderNowPlaying(); updateStorageInfo();
+      renderList(); renderNowPlaying(); updateStorageInfo(); updateMediaSession();
       toast('Track deleted.');
     }).catch(function () { toast('That track couldn’t be deleted. Reload the page and try again.'); });
   }
@@ -739,7 +800,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     } else {
       state.order = ids;
     }
-    els.music.loop = shouldLoopNative();
+    if (leader === 'track') els.music.loop = shouldLoopNative();
   }
   function shouldLoopNative() { return state.repeat === 'one' || (state.repeat === 'all' && state.order.length === 1); }
   function neighbor(dir, wrap) {
@@ -752,20 +813,66 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     if (j < 0) return (wrap || state.repeat !== 'off') ? o[o.length - 1] : o[0];
     return o[j];
   }
+  function musicActive() { return state.musicOn && !!currentTrack(); }
 
-  /* ---------- playback ---------- */
-  function setTrack(id) {
+  /* ---------- the leader: one audio element the system controls ----------
+     The music element always carries the session: your track, or a silent loop in tone-only mode,
+     so the lock screen, Control Center and media keys have one player to talk to. */
+  var leader = 'none';      // what the element holds: 'track', 'silence' or 'none'
+  var switching = false;    // true while we swap its source during playback
+  var resume = null;        // { id, at }: where to continue a track after tone-only
+  var pendingSeek = 0;
+  var silentUrl = null;
+
+  function silentSrc() {
+    if (silentUrl) return silentUrl;
+    var sr = 8000, n = sr * 30, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+    function w(o, s) { for (var i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); }
+    w(0, 'RIFF'); v.setUint32(4, 36 + n, true); w(8, 'WAVE');
+    w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, sr, true); v.setUint32(28, sr, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true);
+    w(36, 'data'); v.setUint32(40, n, true);
+    new Uint8Array(buf, 44).fill(128); // 8-bit silence
+    silentUrl = URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+    return silentUrl;
+  }
+  function loadTrackSrc(id) {
     var url = state.urls.get(id);
     if (!url) return false;
+    switching = !els.music.paused;
+    pendingSeek = (resume && resume.id === id) ? resume.at : 0;
+    resume = null;
+    els.music.loop = shouldLoopNative();
+    els.music.src = url;
+    leader = 'track';
+    var t = trackById(id);
+    els.tCur.textContent = fmtTime(pendingSeek);
+    els.tDur.textContent = t && t.duration ? fmtTime(t.duration) : '0:00';
+    els.seek.value = t && t.duration ? Math.round(pendingSeek / t.duration * 1000) : 0; setFill(els.seek);
+    return true;
+  }
+  function loadSilence() {
+    if (leader === 'silence') return;
+    if (leader === 'track' && state.currentId) resume = { id: state.currentId, at: els.music.ended ? 0 : (els.music.currentTime || 0) };
+    switching = !els.music.paused;
+    els.music.loop = true;
+    els.music.src = silentSrc();
+    leader = 'silence';
+  }
+  function unloadLeader() {
+    if (leader === 'none') return;
+    els.music.pause();
+    els.music.removeAttribute('src');
+    try { els.music.load(); } catch (e) {}
+    leader = 'none';
+  }
+
+  function setTrack(id) {
+    if (!state.urls.get(id)) return false;
     state.currentId = id;
     store.set('currentId', id);
-    ignorePause();
-    els.music.src = url;
-    els.music.loop = shouldLoopNative();
-    els.tCur.textContent = '0:00';
-    var t = trackById(id);
-    els.tDur.textContent = t && t.duration ? fmtTime(t.duration) : '0:00';
-    els.seek.value = 0; setFill(els.seek);
+    resume = null;
+    if (state.musicOn) loadTrackSrc(id);
     renderNowPlaying(); renderList(); updateMediaSession();
     return true;
   }
@@ -773,172 +880,52 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   function safePlay(el) {
     try {
       var p = el.play();
-      if (p && p.catch) p.catch(function (err) {
+      if (p && p.then) p.then(function () { switching = false; }, function (err) {
+        switching = false;
         if (!err) return;
-        if (err.name === 'NotAllowedError') { state.playing = false; renderPlayState(); toast('Tap play to start audio.'); }
-        else if (err.name === 'NotSupportedError' && el === els.music) { toast('This track can’t be played in this browser.'); }
+        if (err.name === 'NotAllowedError') { pauseAll(); toast('Tap play to start audio.'); }
+        else if (err.name === 'NotSupportedError' && leader === 'track') { toast('This track can’t be played in this browser.'); }
       });
-    } catch (e) {}
+      else switching = false;
+    } catch (e) { switching = false; }
   }
 
-  function playAll() {
-    if (!state.currentId && state.order.length) setTrack(state.order[0]);
-    if (!state.currentId && state.mode === 'off') {
-      toast(state.tracks.length ? 'Pick a track, or turn on a tone.' : 'Add tracks in the Library, or turn on a tone.');
-      return;
-    }
-    state.playing = true;
-    if (state.currentId) { if (canSetVolume) els.music.volume = gain(state.volMusic); safePlay(els.music); }
-    toneStart(); // inside the tap, so Safari lets audio start
-    renderPlayState(); startScope(); updateMediaSession();
-  }
-
-  function pauseAll() {
-    state.playing = false;
-    ignorePause();
-    els.music.pause();
-    toneStop();
-    renderPlayState(); updateMediaSession();
-  }
-  function togglePlay() { if (state.playing) pauseAll(); else playAll(); }
-
-  function nextTrack() {
-    var id = neighbor(1, true);
-    if (!id) return;
-    setTrack(id);
-    if (state.playing) safePlay(els.music);
-  }
-  function prevTrack() {
-    if (els.music.currentTime > 3) { els.music.currentTime = 0; return; }
-    var id = neighbor(-1, true);
-    if (!id) return;
-    setTrack(id);
-    if (state.playing) safePlay(els.music);
-  }
-
-  function onExternalPause(e) {
-    if (performance.now() < ignorePauseUntil || !state.playing) return;
-    if (e.target === els.music && els.music.ended) return;
-    pauseAll();
-  }
-
-  els.music.addEventListener('ended', function () {
-    // The next track's address already exists, so switching is synchronous; this matters when the iPhone screen is locked.
-    var id = neighbor(1, false);
-    if (id) { setTrack(id); safePlay(els.music); }
-    else if (state.mode === 'off') { pauseAll(); }
-    else { renderNowPlaying(); }
-  });
-  els.music.addEventListener('pause', onExternalPause);
-  els.tone.addEventListener('pause', onExternalPause);
-  els.music.addEventListener('loadedmetadata', function () {
-    var d = els.music.duration;
-    if (isFinite(d)) { els.tDur.textContent = fmtTime(d); updateDuration(state.currentId, d); }
-  });
-  var seeking = false;
-  els.music.addEventListener('timeupdate', function () {
-    if (seeking) return;
-    var d = els.music.duration, c = els.music.currentTime;
-    els.tCur.textContent = fmtTime(c);
-    if (isFinite(d) && d > 0) { els.seek.value = Math.round(c / d * 1000); setFill(els.seek); }
-  });
-  els.music.addEventListener('error', function () {
-    if (!state.currentId) return;
-    toast('This track can’t be played in this browser.');
-  });
-  els.seek.addEventListener('input', function () {
-    seeking = true; setFill(els.seek);
-    var d = els.music.duration;
-    if (isFinite(d)) els.tCur.textContent = fmtTime(els.seek.value / 1000 * d);
-  });
-  els.seek.addEventListener('change', function () {
-    var d = els.music.duration;
-    if (isFinite(d)) els.music.currentTime = els.seek.value / 1000 * d;
-    seeking = false;
-  });
-
-  /* ---------- tone synthesis ---------- */
-  // Isochronic envelopes, p = position within one pulse cycle (0..1).
-  // Smooth: loudness follows a sine, rising and falling continuously (sine amplitude modulation).
-  function envSmooth(p) { return 0.5 - 0.5 * Math.cos(2 * Math.PI * p); }
-  // Sharp: discrete pulses. On for half of each cycle with raised-cosine edges so they don't click, silent for the other half.
-  function envSharp(p) {
-    var R = 0.12;
-    if (p < R) return 0.5 - 0.5 * Math.cos(Math.PI * p / R);
-    if (p < 0.5 - R) return 1;
-    if (p < 0.5) return 0.5 - 0.5 * Math.cos(Math.PI * (0.5 - p) / R);
-    return 0;
-  }
-  function envFor(shape) { return shape === 'sharp' ? envSharp : envSmooth; }
-
-  function renderToneWav(mode, beat, carrier, amp, shape) {
-    var SR = SR_LOOP, chs = mode === 'binaural' ? 2 : 1, n = SR * LOOP, bytes = n * chs * 2;
-    var buf = new ArrayBuffer(44 + bytes), v = new DataView(buf);
-    function w(o, s) { for (var i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); }
-    w(0, 'RIFF'); v.setUint32(4, 36 + bytes, true); w(8, 'WAVE');
-    w(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, chs, true);
-    v.setUint32(24, SR, true); v.setUint32(28, SR * chs * 2, true); v.setUint16(32, chs * 2, true); v.setUint16(34, 16, true);
-    w(36, 'data'); v.setUint32(40, bytes, true);
-    var pcm = new Int16Array(buf, 44, n * chs), S = 32767 * amp, i, j;
-    if (mode === 'binaural') {
-      // Left ear slightly below the carrier, right ear slightly above; the difference is the beat.
-      var kl = 2 * Math.PI * (carrier - beat / 2) / SR, kr = 2 * Math.PI * (carrier + beat / 2) / SR;
-      for (i = 0, j = 0; i < n; i++, j += 2) { pcm[j] = Math.round(Math.sin(kl * i) * S); pcm[j + 1] = Math.round(Math.sin(kr * i) * S); }
-    } else {
-      var kc = 2 * Math.PI * carrier / SR, pr = beat / SR, envf = envFor(shape);
-      for (i = 0; i < n; i++) pcm[i] = Math.round(Math.sin(kc * i) * envf((pr * i) % 1) * S);
-    }
-    return new Blob([buf], { type: 'audio/wav' });
-  }
-
-  var toneKey = '', toneUrl = null, toneSeq = 0;
-  function toneParamsKey() { return [state.mode, state.beat, state.carrier, state.mode === 'isochronic' ? state.pulse : '-', canSetVolume ? 'v' : state.volTone].join('|'); }
-  function buildTone() {
-    if (state.mode === 'off') return false;
-    var key = toneParamsKey();
-    if (key === toneKey && els.tone.getAttribute('src')) return false;
-    var amp = canSetVolume ? 0.7 : 0.7 * gain(state.volTone);
-    var blob = renderToneWav(state.mode, state.beat, state.carrier, amp, state.pulse);
-    var old = toneUrl;
-    toneUrl = URL.createObjectURL(blob);
-    toneKey = key;
-    ignorePause();
-    els.tone.src = toneUrl;
-    els.tone.loop = true;
-    if (old) setTimeout(function () { URL.revokeObjectURL(old); }, 3000);
-    return true;
-  }
-
-  function fadeTo(el, target, ms) {
-    return new Promise(function (resolve) {
-      if (!canSetVolume) { resolve(); return; }
-      var id = (el._fade = (el._fade || 0) + 1), from = el.volume, t0 = performance.now();
-      var done = setTimeout(function () { if (el._fade === id) el.volume = target; resolve(); }, ms + 120);
-      function step(now) {
-        if (el._fade !== id) { clearTimeout(done); resolve(); return; }
-        var k = Math.min(1, (now - t0) / ms);
-        el.volume = clamp(from + (target - from) * k, 0, 1);
-        if (k < 1) requestAnimationFrame(step); else { clearTimeout(done); resolve(); }
-      }
-      requestAnimationFrame(step);
-    });
-  }
-
-  /* ---------- live engine (Web Audio) ----------
-     Oscillators computed sample by sample in the audio thread: no file, so nothing ever loops or restarts,
-     and frequency changes glide in real time. Used on Mac, and on iPhone in "Gapless" mode, where Safari
-     interrupts it when the screen locks or you switch apps. */
-  var ac = null, liveOut = null, live = null, waveCache = {}, suspendTimer = 0;
+  /* ---------- tone engine (Web Audio) ----------
+     Oscillators computed in the audio thread: no files, no loops, every change glides.
+     voice -> level (tone slider) -> fade (start/stop/session fades) -> speakers */
+  var ac = null, levelNode = null, fadeNode = null, voice = null, toneOn = false, waveCache = {}, suspendTimer = 0;
+  var ctxExpect = null; // the state our own resume() or suspend() is about to produce
   function ensureAC() {
     if (ac) return ac;
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
-    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {} // iPhone: play even with the silent switch on
+    // "playback" keeps the tone audible with the silent switch on and while the iPhone is locked.
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
     try { ac = new AC(); } catch (e) { return null; }
-    liveOut = ac.createGain();
-    liveOut.gain.value = 0;
-    liveOut.connect(ac.destination);
+    levelNode = ac.createGain();
+    levelNode.gain.value = toneAmp(state.toneLevel);
+    fadeNode = ac.createGain();
+    fadeNode.gain.value = 0;
+    levelNode.connect(fadeNode);
+    fadeNode.connect(ac.destination);
+    ac.onstatechange = onContextState;
     return ac;
+  }
+  function hold(param, t) {
+    if (param.cancelAndHoldAtTime) { try { param.cancelAndHoldAtTime(t); return; } catch (e) {} }
+    var v = param.value;
+    param.cancelScheduledValues(t);
+    param.setValueAtTime(v, t);
+  }
+  function glide(param, value, tc) {
+    var t = ac.currentTime;
+    hold(param, t);
+    param.setTargetAtTime(value, t, tc);
+  }
+  function rampTo(param, value, secs) {
+    var t = ac.currentTime;
+    hold(param, t);
+    param.linearRampToValueAtTime(value, t + Math.max(0.02, secs));
   }
   // One cycle of the pulse envelope as a Fourier series, so an oscillator can produce it at any rate.
   function envWave(shape) {
@@ -954,16 +941,10 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     }
     return (waveCache[shape] = { wave: ac.createPeriodicWave(re, im, { disableNormalization: true }), mean: mean });
   }
-  function ramp(param, value, tc) {
-    var t = ac.currentTime;
-    param.cancelScheduledValues(t);
-    param.setValueAtTime(param.value, t);
-    param.setTargetAtTime(value, t, tc);
-  }
-  function liveBuild() {
+  function buildVoice() {
     var c = ac, t = c.currentTime, n = { mode: state.mode, pulse: state.pulse, out: c.createGain(), oscs: [] };
     n.out.gain.setValueAtTime(0, t);
-    n.out.connect(liveOut);
+    n.out.connect(levelNode);
     if (state.mode === 'binaural') {
       n.l = c.createOscillator(); n.r = c.createOscillator();
       n.l.frequency.value = state.carrier - state.beat / 2;
@@ -972,7 +953,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       n.l.connect(m, 0, 0); n.r.connect(m, 0, 1); m.connect(n.out);
       n.oscs = [n.l, n.r];
     } else {
-      // carrier x envelope: the envelope oscillator drives the gain, which rests at the envelope's average
+      // carrier x envelope: the envelope oscillator drives a gain that rests at the envelope's average
       var w = envWave(state.pulse);
       n.car = c.createOscillator(); n.car.frequency.value = state.carrier;
       n.am = c.createGain(); n.am.gain.value = w.mean;
@@ -981,91 +962,273 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       n.oscs = [n.car, n.lfo];
     }
     n.oscs.forEach(function (o) { o.start(t); });
-    n.out.gain.setTargetAtTime(0.7, t, 0.025);
-    var old = live; live = n;
-    if (old) liveDispose(old); // crossfade from the previous sound
+    n.out.gain.setTargetAtTime(carrierComp(state.carrier), t, 0.025);
+    var old = voice; voice = n;
+    if (old) disposeVoice(old, 0.025); // short crossfade between settings
   }
-  function liveDispose(n) {
+  function disposeVoice(n, tc) {
     var t = ac.currentTime;
-    ramp(n.out.gain, 0, 0.025);
-    n.oscs.forEach(function (o) { try { o.stop(t + 0.25); } catch (e) {} });
-    setTimeout(function () { try { n.out.disconnect(); } catch (e) {} }, 500);
+    glide(n.out.gain, 0, tc);
+    n.oscs.forEach(function (o) { try { o.stop(t + tc * 10); } catch (e) {} });
+    setTimeout(function () { try { n.out.disconnect(); } catch (e) {} }, (tc * 10 + 0.3) * 1000);
   }
-  function liveRetune() {
-    if (!live || !ac) return;
-    if (live.mode !== state.mode || (state.mode === 'isochronic' && live.pulse !== state.pulse)) { liveBuild(); return; }
+  function retuneVoice() {
+    if (!voice || !ac) return;
+    if (voice.mode !== state.mode || (state.mode === 'isochronic' && voice.pulse !== state.pulse)) { buildVoice(); return; }
     var t = ac.currentTime, tc = 0.04;
-    if (live.mode === 'binaural') {
-      live.l.frequency.setTargetAtTime(state.carrier - state.beat / 2, t, tc);
-      live.r.frequency.setTargetAtTime(state.carrier + state.beat / 2, t, tc);
+    if (voice.mode === 'binaural') {
+      voice.l.frequency.setTargetAtTime(state.carrier - state.beat / 2, t, tc);
+      voice.r.frequency.setTargetAtTime(state.carrier + state.beat / 2, t, tc);
     } else {
-      live.car.frequency.setTargetAtTime(state.carrier, t, tc);
-      live.lfo.frequency.setTargetAtTime(state.beat, t, tc);
+      voice.car.frequency.setTargetAtTime(state.carrier, t, tc);
+      voice.lfo.frequency.setTargetAtTime(state.beat, t, tc);
     }
+    voice.out.gain.setTargetAtTime(carrierComp(state.carrier), t, tc);
   }
-  function liveStart() {
+  function toneStart() {
+    if (state.mode === 'off') { toneStop(); return true; }
     var c = ensureAC();
-    if (!c) return false;
+    if (!c) { toast('This browser can’t generate tones.'); return false; }
     clearTimeout(suspendTimer);
-    if (c.state !== 'running') { try { c.resume(); } catch (e) {} }
-    if (!live) liveBuild(); else liveRetune();
-    ramp(liveOut.gain, gain(state.volTone), 0.03);
+    if (c.state !== 'running') { ctxExpect = 'running'; try { var p = c.resume(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    if (!voice) buildVoice(); else retuneVoice();
+    if (!toneOn) {
+      toneOn = true;
+      if (timer.fading) rampTo(fadeNode.gain, 0, timer.remaining); // inside the session's closing fade
+      else rampTo(fadeNode.gain, 1, FADE_IN);                       // fade in from silence
+    }
     return true;
   }
-  function liveStop() {
+  function toneStop(secs) {
     if (!ac) return;
-    ramp(liveOut.gain, 0, 0.02);
-    if (live) { liveDispose(live); live = null; }
-    clearTimeout(suspendTimer);
-    suspendTimer = setTimeout(function () { if (!state.playing && ac.state === 'running') ac.suspend(); }, 600);
-  }
-
-  /* ---------- engine choice ---------- */
-  function toneEngine() { return (canSetVolume || state.iosEngine === 'gapless') ? 'live' : 'loop'; }
-  var activeEngine = null; // the engine currently making sound
-  function toneStart() {
-    if (state.mode === 'off') { toneStop(); return; }
-    var eng = toneEngine();
-    if (activeEngine && activeEngine !== eng) toneStop();
-    if (eng === 'live') {
-      if (liveStart()) { activeEngine = 'live'; return; }
-      state.iosEngine = 'lockproof'; // no Web Audio available: fall back to the loop
+    var d = secs == null ? FADE_OUT : secs;
+    toneOn = false;
+    rampTo(fadeNode.gain, 0, d);
+    if (voice) {
+      var v = voice; voice = null;
+      v.oscs.forEach(function (o) { try { o.stop(ac.currentTime + d + 0.05); } catch (e) {} });
+      setTimeout(function () { try { v.out.disconnect(); } catch (e) {} }, (d + 0.4) * 1000);
     }
-    buildTone();
-    if (canSetVolume) els.tone.volume = gain(state.volTone);
-    safePlay(els.tone);
-    activeEngine = 'loop';
-  }
-  function toneStop() {
-    if (activeEngine === 'live') liveStop();
-    else if (activeEngine === 'loop') { ignorePause(); els.tone.pause(); }
-    activeEngine = null;
+    // Suspend once silent: a suspended engine stops competing with the music player for system controls.
+    clearTimeout(suspendTimer);
+    suspendTimer = setTimeout(function () {
+      if (!toneOn && ac.state === 'running') { ctxExpect = 'suspended'; try { var p = ac.suspend(); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    }, (d + 0.25) * 1000);
   }
 
-  // Called after any tone setting changes.
-  function updateToneAudio() {
-    var seq = ++toneSeq;
-    if (state.mode === 'off') { toneStop(); return; }
-    if (!state.playing) { if (toneEngine() === 'loop') buildTone(); return; } // pre-render so play starts instantly
-    if (toneEngine() === 'live') { if (activeEngine === 'live') liveRetune(); else toneStart(); return; }
-    if (activeEngine !== 'loop') { toneStart(); return; }
-    if (toneParamsKey() === toneKey && els.tone.getAttribute('src')) {
-      if (els.tone.paused) safePlay(els.tone);
+  /* ---------- playback ---------- */
+  function playAll() {
+    if (state.musicOn && !currentTrack() && state.order.length) setTrack(state.order[0]);
+    var music = musicActive(), tone = state.mode !== 'off';
+    if (!music && !tone) {
+      toast(state.musicOn ? (state.tracks.length ? 'Pick a track, or turn on a tone.' : 'Add tracks in the Library, or turn on a tone.') : 'Turn on Binaural or Isochronic to play the tone on its own.');
       return;
     }
-    var fadeOut = (canSetVolume && !els.tone.paused) ? fadeTo(els.tone, 0, 70) : Promise.resolve();
-    fadeOut.then(function () {
-      if (seq !== toneSeq || !state.playing) return;
-      buildTone();
-      if (canSetVolume) els.tone.volume = 0;
-      safePlay(els.tone);
-      if (canSetVolume) fadeTo(els.tone, gain(state.volTone), 160);
-    });
+    state.playing = true;
+    if (tone) toneStart(); // the tone starts first, so the music player is the newest audio source
+    if (music) {
+      if (leader !== 'track') loadTrackSrc(state.currentId);
+      if (canSetVolume) els.music.volume = musicVolume();
+    } else {
+      loadSilence();
+    }
+    safePlay(els.music);
+    timerResume();
+    renderPlayState(); startScope(); updateMediaSession();
   }
-  var toneDebounce = 0;
-  function updateToneSoon(ms) { clearTimeout(toneDebounce); toneDebounce = setTimeout(updateToneAudio, ms); }
+
+  function pauseAll(fadeSecs) {
+    state.playing = false;
+    if (!els.music.paused) els.music.pause();
+    toneStop(fadeSecs);
+    timerPause();
+    if (canSetVolume) els.music.volume = gain(state.volMusic);
+    renderPlayState(); updateMediaSession();
+  }
+  function togglePlay() { if (state.playing) pauseAll(); else playAll(); }
+
+  function nextTrack() {
+    if (!musicActive()) return;
+    var id = neighbor(1, true);
+    if (!id) return;
+    setTrack(id);
+    if (state.playing) safePlay(els.music);
+  }
+  function prevTrack() {
+    if (!musicActive()) return;
+    if (els.music.currentTime > 3) { els.music.currentTime = 0; updatePosition(); return; }
+    var id = neighbor(-1, true);
+    if (!id) return;
+    setTrack(id);
+    if (state.playing) safePlay(els.music);
+  }
+
+  function setMusicOn(on) {
+    if (state.musicOn === on) return;
+    state.musicOn = on; store.set('musicOn', on);
+    if (on) {
+      if (!currentTrack() && state.order.length) setTrack(state.order[0]);
+      else if (currentTrack()) loadTrackSrc(state.currentId);
+      if (state.playing) {
+        if (musicActive()) { if (canSetVolume) els.music.volume = musicVolume(); safePlay(els.music); }
+        else if (state.mode === 'off') pauseAll();
+      }
+    } else {
+      if (state.mode !== 'off' || leader === 'track') loadSilence();
+      if (state.playing) { if (state.mode === 'off') pauseAll(); else safePlay(els.music); }
+    }
+    renderNowPlaying(); updateMediaSession();
+  }
+
+  /* ---------- keeping every source in step ----------
+     The system can pause or resume the music element or the tone engine directly
+     (lock screen, Control Center, media keys, headphones, calls). Whichever one it touches,
+     the app applies the same to the other. */
+  els.music.addEventListener('pause', function () {
+    if (!state.playing || switching || els.music.ended) return;
+    pauseAll();
+  });
+  els.music.addEventListener('play', function () {
+    if (state.playing) return;
+    playAll();
+  });
+  els.music.addEventListener('playing', function () { switching = false; });
+  function onContextState() {
+    var s = ac.state;
+    if (ctxExpect === s) { ctxExpect = null; return; } // our own resume or suspend
+    if (s === 'suspended' && state.playing && toneOn) pauseAll(0.05);  // paused from outside the app
+    else if (s === 'running' && !state.playing && !toneOn) playAll();   // resumed from outside the app
+    // 'interrupted' (a call, Siri): the music element reports its own pause, and the tone resumes when allowed
+  }
+
+  els.music.addEventListener('ended', function () {
+    if (leader !== 'track') return;
+    var id = neighbor(1, false);
+    if (id) { setTrack(id); safePlay(els.music); }
+    else if (state.mode === 'off') { pauseAll(); }
+    else { loadSilence(); safePlay(els.music); renderNowPlaying(); } // playlist done: the tone carries on
+  });
+  els.music.addEventListener('loadedmetadata', function () {
+    if (leader !== 'track') return;
+    var d = els.music.duration;
+    if (pendingSeek && isFinite(d) && pendingSeek < d) { try { els.music.currentTime = pendingSeek; } catch (e) {} }
+    pendingSeek = 0;
+    if (isFinite(d)) { els.tDur.textContent = fmtTime(d); updateDuration(state.currentId, d); }
+    updatePosition();
+  });
+  var seeking = false;
+  els.music.addEventListener('timeupdate', function () {
+    timerTick();
+    if (seeking || leader !== 'track') return;
+    var d = els.music.duration, c = els.music.currentTime;
+    els.tCur.textContent = fmtTime(c);
+    if (isFinite(d) && d > 0) { els.seek.value = Math.round(c / d * 1000); setFill(els.seek); }
+  });
+  els.music.addEventListener('seeked', updatePosition);
+  els.music.addEventListener('error', function () {
+    if (leader === 'track') toast('This track can’t be played in this browser.');
+  });
+  els.seek.addEventListener('input', function () {
+    seeking = true; setFill(els.seek);
+    var d = els.music.duration;
+    if (isFinite(d)) els.tCur.textContent = fmtTime(els.seek.value / 1000 * d);
+  });
+  els.seek.addEventListener('change', function () {
+    var d = els.music.duration;
+    if (leader === 'track' && isFinite(d)) els.music.currentTime = els.seek.value / 1000 * d;
+    seeking = false;
+  });
+
+  /* ---------- focus timer ----------
+     Counts down while playing, pauses with playback, and fades everything out over the last 10 seconds. */
+  function musicVolume() {
+    var f = timer.fading ? clamp(timer.remaining / END_FADE, 0, 1) : 1;
+    return gain(state.volMusic) * f;
+  }
+  function timerResume() {
+    if (!timer.min || timer.running) return;
+    if (timer.done || timer.remaining <= 0) { timer.done = false; timer.remaining = timer.min * 60; }
+    timer.running = true;
+    timer.last = performance.now();
+    if (!timer.iv) timer.iv = setInterval(timerTick, 250);
+    renderTimer();
+  }
+  function timerPause() {
+    if (timer.running) timerTick();
+    timer.running = false;
+    clearInterval(timer.iv); timer.iv = 0;
+    if (timer.fading) timer.fading = false; // the pause fade takes over; the closing fade restarts on resume
+    renderTimer();
+  }
+  function timerTick() {
+    if (!timer.running) return;
+    var now = performance.now();
+    timer.remaining -= (now - timer.last) / 1000;
+    timer.last = now;
+    if (timer.remaining <= END_FADE && !timer.fading) {
+      timer.fading = true;
+      if (ac && toneOn) rampTo(fadeNode.gain, 0, Math.max(0.05, timer.remaining));
+    }
+    if (timer.fading && canSetVolume && leader === 'track') els.music.volume = musicVolume();
+    if (timer.remaining <= 0) { timerComplete(); return; }
+    var sec = Math.ceil(timer.remaining);
+    if (sec !== timer.shown) renderTimer();
+  }
+  function timerComplete() {
+    timer.running = false; timer.fading = false; timer.done = true; timer.remaining = 0;
+    clearInterval(timer.iv); timer.iv = 0;
+    pauseAll(0.05);
+    toast('Focus session complete.');
+    renderTimer();
+  }
+  function timerSet(min) {
+    var wasFading = timer.fading;
+    clearInterval(timer.iv); timer.iv = 0;
+    timer.min = min; store.set('timerMin', min);
+    timer.running = false; timer.fading = false; timer.done = false; timer.remaining = min * 60;
+    if (wasFading && state.playing) {
+      if (ac && toneOn) rampTo(fadeNode.gain, 1, 0.6);
+      if (canSetVolume && leader === 'track') els.music.volume = gain(state.volMusic);
+    }
+    if (state.playing) timerResume();
+    renderTimer();
+  }
+  function renderTimer() {
+    var total = timer.min * 60, rem = Math.max(0, timer.remaining);
+    timer.shown = Math.ceil(rem);
+    each(els.timerLen, 'button', function (b) { b.setAttribute('aria-checked', String(num(b.dataset.min, 0) === timer.min)); });
+    els.timer.classList.toggle('is-off', !timer.min);
+    els.timer.classList.toggle('is-running', timer.running);
+    if (!timer.min) {
+      els.timerRead.textContent = 'Off';
+      els.timerFill.style.width = '0%';
+      els.timerNote.textContent = 'Plays until you stop it.';
+      return;
+    }
+    els.timerRead.textContent = timer.done ? 'Done' : fmtTime(Math.ceil(rem));
+    els.timerFill.style.width = (timer.done ? 100 : (1 - rem / total) * 100) + '%';
+    var note;
+    if (timer.done) note = 'Session complete. Press play to start another.';
+    else if (timer.running) note = 'Ends at ' + new Date(Date.now() + rem * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', fading out over the last 10 seconds.';
+    else if (rem < total) note = 'Paused with playback.';
+    else note = 'Starts with playback and fades out over the last 10 seconds.';
+    els.timerNote.textContent = note;
+  }
 
   /* ---------- scope ---------- */
+  // Isochronic envelopes, p = position within one pulse cycle (0..1).
+  // Smooth: loudness follows a sine, rising and falling continuously (sine amplitude modulation).
+  function envSmooth(p) { return 0.5 - 0.5 * Math.cos(2 * Math.PI * p); }
+  // Sharp: discrete pulses. On for half of each cycle with raised-cosine edges so they don't click, silent for the other half.
+  function envSharp(p) {
+    var R = 0.12;
+    if (p < R) return 0.5 - 0.5 * Math.cos(Math.PI * p / R);
+    if (p < 0.5 - R) return 1;
+    if (p < 0.5) return 0.5 - 0.5 * Math.cos(Math.PI * (0.5 - p) / R);
+    return 0;
+  }
+  function envFor(shape) { return shape === 'sharp' ? envSharp : envSmooth; }
+
   var sctx = els.scope.getContext('2d'), scopeW = 0, scopeH = 0, dpr = 1, phase = 0, lastT = 0, rafId = 0, colors = {};
   var reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
   function readColors() {
@@ -1099,7 +1262,6 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       ys[x] = state.mode === 'isochronic' ? env((f * t) % 1) : Math.abs(Math.cos(Math.PI * f * t));
     }
     var top = colors.trace, bottom = state.mode === 'binaural' ? colors.trace2 : colors.trace;
-    // filled envelope, top and bottom halves
     c.globalAlpha = 0.2;
     c.fillStyle = top; c.beginPath(); c.moveTo(0, mid);
     for (x = 0; x <= scopeW; x++) c.lineTo(x, mid - ys[x] * A);
@@ -1135,7 +1297,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   function tick(now) {
     rafId = 0;
     if (!state.playing || document.hidden) { drawScope(); return; }
-    phase = (phase + (now - lastT) / 1000) % LOOP;
+    phase = (phase + (now - lastT) / 1000) % 3600;
     lastT = now;
     drawScope();
     rafId = requestAnimationFrame(tick);
@@ -1144,6 +1306,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   /* ---------- rendering ---------- */
   function toneSummary() {
     if (state.mode === 'off') return 'Tone off';
+    if (state.toneLevel === 0) return 'Tone muted';
     return MODES[state.mode] + ' · ' + fmtHz(state.beat) + ' Hz ' + bandFor(state.beat).name.toLowerCase();
   }
 
@@ -1158,15 +1321,19 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   }
 
   function renderNowPlaying() {
-    var t = currentTrack(), has = state.tracks.length > 0;
-    els.npTitle.textContent = t ? t.name : (has ? 'No track selected' : 'No track loaded');
+    var t = currentTrack(), has = state.tracks.length > 0, toneOnly = !state.musicOn;
+    document.body.classList.toggle('tone-only', toneOnly);
+    els.npTitle.textContent = toneOnly ? 'Tone only' : (t ? t.name : (has ? 'No track selected' : 'No track loaded'));
     els.npSub.textContent = toneSummary();
-    els.npEmpty.hidden = has;
-    els.seek.disabled = !t;
-    els.prev.disabled = els.next.disabled = !has;
-    els.miniTitle.textContent = t ? t.name : 'Tone only';
+    els.npEmpty.hidden = toneOnly || has;
+    each(els.source, 'button', function (b) { b.setAttribute('aria-checked', String((b.dataset.source === 'tone') === toneOnly)); });
+    els.seek.disabled = toneOnly || !t;
+    els.prev.disabled = els.next.disabled = els.shuffle.disabled = els.repeat.disabled = toneOnly || !has;
+    els.volMusic.disabled = toneOnly;
+    els.miniTitle.textContent = toneOnly || !t ? 'Tone only' : t.name;
     els.miniSub.textContent = toneSummary();
-    els.mini.hidden = !(state.tab === 'library' && (t || state.playing));
+    els.miniNext.hidden = !musicActive();
+    els.mini.hidden = !(state.tab === 'library' && (t || state.playing || toneOnly));
     document.body.classList.toggle('has-mini', !els.mini.hidden);
   }
 
@@ -1179,8 +1346,8 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   }
 
   function renderVolumes() {
-    els.volMusic.value = state.volMusic; els.volTone.value = state.volTone;
-    els.outMusic.textContent = Math.round(state.volMusic); els.outTone.textContent = Math.round(state.volTone);
+    els.volMusic.value = state.volMusic; els.volTone.value = state.toneLevel;
+    els.outMusic.textContent = Math.round(state.volMusic); els.outTone.textContent = Math.round(state.toneLevel);
     setFill(els.volMusic); setFill(els.volTone);
     els.rowMusic.hidden = !canSetVolume;
     els.iosNote.hidden = canSetVolume;
@@ -1202,11 +1369,8 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 
   function renderTone() {
     var band = bandFor(state.beat), off = state.mode === 'off';
-    Array.prototype.forEach.call(els.mode.querySelectorAll('button'), function (b) { b.setAttribute('aria-checked', String(b.dataset.mode === state.mode)); });
-    Array.prototype.forEach.call(els.bands.querySelectorAll('.band'), function (b) {
-      var p = num(b.dataset.preset, 0);
-      b.setAttribute('aria-pressed', String(bandFor(p) === band));
-    });
+    each(els.mode, 'button', function (b) { b.setAttribute('aria-checked', String(b.dataset.mode === state.mode)); });
+    each(els.bands, '.band', function (b) { b.setAttribute('aria-pressed', String(bandFor(num(b.dataset.preset, 0)) === band)); });
     els.beat.value = state.beat; els.carrier.value = state.carrier;
     setFill(els.beat); setFill(els.carrier);
     els.outBeat.textContent = fmtHz(state.beat) + ' Hz';
@@ -1235,14 +1399,12 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       els.scopeCap.textContent = 'No tone';
       els.modeHint.textContent = 'Tone off. Pick Binaural or Isochronic to layer a tone under your music.';
     }
+    if (!off && state.carrier > DEFAULT_CARRIER) {
+      els.modeHint.textContent += ' Above 150 Hz the tone is turned down automatically to keep the same loudness.';
+    }
     els.beat.disabled = els.carrier.disabled = off;
     els.optPulse.hidden = state.mode !== 'isochronic';
-    Array.prototype.forEach.call(els.pulse.querySelectorAll('button'), function (b) { b.setAttribute('aria-checked', String(b.dataset.pulse === state.pulse)); });
-    els.optEngine.hidden = canSetVolume || off;
-    Array.prototype.forEach.call(els.engine.querySelectorAll('button'), function (b) { b.setAttribute('aria-checked', String(b.dataset.engine === state.iosEngine)); });
-    els.engineNote.textContent = state.iosEngine === 'gapless'
-      ? 'No gaps, and slider changes are instant. The tone stops while the screen is locked or you are in another app; your music keeps playing.'
-      : 'The tone keeps playing with the screen locked. It loops every 5 minutes with a short gap, and slider changes apply when you let go.';
+    each(els.pulse, 'button', function (b) { b.setAttribute('aria-checked', String(b.dataset.pulse === state.pulse)); });
     $('#hint-phones').toggleAttribute('hidden', state.mode !== 'binaural');
     $('#hint-info').toggleAttribute('hidden', state.mode === 'binaural');
     drawScope();
@@ -1251,7 +1413,6 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   function renderList() {
     var tracks = sortedTracks(), q = els.filter.value.trim().toLowerCase();
     var shown = q ? tracks.filter(function (t) { return t.name.toLowerCase().indexOf(q) >= 0; }) : tracks;
-    els.libCount.textContent = tracks.length;
     els.libEmpty.hidden = tracks.length > 0;
     els.filter.hidden = tracks.length < 2;
     els.list.hidden = tracks.length === 0;
@@ -1262,14 +1423,15 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       li0.appendChild(p); els.list.appendChild(li0);
     }
     shown.forEach(function (t) {
+      var cur = t.id === state.currentId && state.musicOn;
       var li = document.createElement('li');
-      li.className = 'track' + (t.id === state.currentId ? ' current' : '');
+      li.className = 'track' + (cur ? ' current' : '');
       li.dataset.id = t.id;
       var main = document.createElement('button');
       main.type = 'button'; main.className = 'track-main'; main.dataset.action = 'play';
-      main.setAttribute('aria-label', (t.id === state.currentId ? 'Play or pause ' : 'Play ') + t.name);
+      main.setAttribute('aria-label', (cur ? 'Play or pause ' : 'Play ') + t.name);
       var idx = document.createElement('span'); idx.className = 't-idx';
-      if (t.id === state.currentId) idx.innerHTML = '<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>';
+      if (cur) idx.innerHTML = '<span class="eq" aria-hidden="true"><i></i><i></i><i></i></span>';
       else idx.textContent = String(tracks.indexOf(t) + 1);
       var name = document.createElement('span'); name.className = 't-name'; name.textContent = t.name;
       var dur = document.createElement('span'); dur.className = 't-dur'; dur.textContent = t.duration ? fmtTime(t.duration) : '–';
@@ -1296,24 +1458,41 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     if (!lib) requestAnimationFrame(sizeScope);
   }
 
-  /* ---------- media session (lock screen / Control Center) ---------- */
+  /* ---------- media session (lock screen, Control Center, media keys) ---------- */
+  function updatePosition() {
+    var ms = navigator.mediaSession;
+    if (!ms || !ms.setPositionState) return;
+    try {
+      var d = els.music.duration;
+      if (leader === 'track' && isFinite(d) && d > 0) {
+        ms.setPositionState({ duration: d, playbackRate: els.music.playbackRate || 1, position: Math.min(Math.max(0, els.music.currentTime || 0), d) });
+      } else {
+        ms.setPositionState(); // no timeline for the tone on its own
+      }
+    } catch (e) {}
+  }
+  function setHandler(ms, action, fn) { try { ms.setActionHandler(action, fn); } catch (e) {} }
   function updateMediaSession() {
     var ms = navigator.mediaSession;
     if (!ms) return;
+    var music = musicActive(), t = currentTrack();
     try {
-      var t = currentTrack();
-      if (window.MediaMetadata) ms.metadata = new MediaMetadata({ title: t ? t.name : toneSummary(), artist: t ? toneSummary() : 'Focus Player', album: 'Focus Player', artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }] });
+      if (window.MediaMetadata) ms.metadata = new MediaMetadata(music
+        ? { title: t.name, artist: toneSummary(), album: 'Focus Player', artwork: ARTWORK }
+        : { title: toneSummary(), artist: 'Focus Player', album: 'Tone only', artwork: ARTWORK });
       ms.playbackState = state.playing ? 'playing' : 'paused';
     } catch (e) {}
+    setHandler(ms, 'nexttrack', music ? nextTrack : null);
+    setHandler(ms, 'previoustrack', music ? prevTrack : null);
+    setHandler(ms, 'seekto', music ? function (d) { if (d && isFinite(d.seekTime)) { els.music.currentTime = d.seekTime; updatePosition(); } } : null);
+    updatePosition();
   }
   function setupMediaSession() {
     var ms = navigator.mediaSession;
     if (!ms) return;
-    var h = {
-      play: playAll, pause: pauseAll, nexttrack: nextTrack, previoustrack: prevTrack,
-      seekto: function (d) { if (d && isFinite(d.seekTime)) els.music.currentTime = d.seekTime; }
-    };
-    Object.keys(h).forEach(function (k) { try { ms.setActionHandler(k, h[k]); } catch (e) {} });
+    setHandler(ms, 'play', function () { playAll(); });
+    setHandler(ms, 'pause', function () { pauseAll(); });
+    setHandler(ms, 'stop', function () { pauseAll(); });
   }
 
   /* ---------- events ---------- */
@@ -1329,35 +1508,39 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
   els.repeat.addEventListener('click', function () {
     state.repeat = ({ off: 'all', all: 'one', one: 'off' })[state.repeat];
     store.set('repeat', state.repeat);
-    els.music.loop = shouldLoopNative();
+    if (leader === 'track') els.music.loop = shouldLoopNative();
     renderToggles();
+  });
+  els.source.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-source]');
+    if (b) setMusicOn(b.dataset.source === 'music');
   });
 
   els.volMusic.addEventListener('input', function () {
     state.volMusic = num(els.volMusic.value, 80); store.set('volMusic', state.volMusic);
     els.outMusic.textContent = state.volMusic; setFill(els.volMusic);
-    if (canSetVolume) els.music.volume = gain(state.volMusic);
+    if (canSetVolume && leader === 'track') els.music.volume = musicVolume();
   });
   els.volTone.addEventListener('input', function () {
-    state.volTone = num(els.volTone.value, 35); store.set('volTone', state.volTone);
-    els.outTone.textContent = state.volTone; setFill(els.volTone);
-    if (activeEngine === 'live') ramp(liveOut.gain, gain(state.volTone), 0.03);
-    else if (canSetVolume) els.tone.volume = gain(state.volTone);
+    state.toneLevel = num(els.volTone.value, 59); store.set('toneLevel', state.toneLevel);
+    els.outTone.textContent = state.toneLevel; setFill(els.volTone);
+    if (ac) glide(levelNode.gain, toneAmp(state.toneLevel), 0.03);
+    renderNowPlaying();
   });
-  // iPhone loop mode bakes the tone level into the file, so re-render when the slider is released
-  els.volTone.addEventListener('change', function () { if (toneEngine() === 'loop' && !canSetVolume) updateToneSoon(50); });
+  els.volTone.addEventListener('change', updateMediaSession);
 
   els.mode.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-mode]');
     if (!b) return;
     state.mode = b.dataset.mode; store.set('mode', state.mode);
-    renderTone(); renderNowPlaying(); updateMediaSession();
+    renderTone(); renderNowPlaying();
     if (state.mode === 'off') {
       toneStop();
-      if (!state.currentId && state.playing) pauseAll();
-    } else {
-      updateToneAudio(); // called inside the tap, so the iPhone allows playback to start
+      if (state.playing && !musicActive()) pauseAll();
+    } else if (state.playing) {
+      toneStart(); // inside the tap, so Safari lets the tone start
     }
+    updateMediaSession();
   });
   els.mode.addEventListener('keydown', function (e) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
@@ -1370,45 +1553,42 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     var b = e.target.closest('.band');
     if (!b) return;
     state.beat = num(b.dataset.preset, 10); store.set('beat', state.beat);
-    if (state.mode === 'off') { state.mode = 'isochronic'; store.set('mode', state.mode); }
-    renderTone(); renderNowPlaying(); updateMediaSession();
-    updateToneAudio();
+    var wasOff = state.mode === 'off';
+    if (wasOff) { state.mode = 'isochronic'; store.set('mode', state.mode); }
+    renderTone(); renderNowPlaying();
+    if (state.playing) { if (wasOff) toneStart(); else retuneVoice(); }
+    updateMediaSession();
   });
-  // Live engine: glide while dragging. Loop engine: re-render once, when the slider is released.
   els.beat.addEventListener('input', function () {
     state.beat = Math.round(num(els.beat.value, 10) * 2) / 2; store.set('beat', state.beat);
     renderTone(); renderNowPlaying();
-    if (activeEngine === 'live') liveRetune();
+    retuneVoice();
   });
+  els.beat.addEventListener('change', updateMediaSession);
   els.carrier.addEventListener('input', function () {
     state.carrier = Math.round(num(els.carrier.value, DEFAULT_CARRIER)); store.set('carrier', state.carrier);
     renderTone();
-    if (activeEngine === 'live') liveRetune();
+    retuneVoice();
   });
-  els.beat.addEventListener('change', function () { if (toneEngine() === 'loop') updateToneSoon(30); updateMediaSession(); });
-  els.carrier.addEventListener('change', function () { if (toneEngine() === 'loop') updateToneSoon(30); });
+  els.carrierReset.addEventListener('click', function () {
+    state.carrier = DEFAULT_CARRIER; store.set('carrier', state.carrier);
+    renderTone(); retuneVoice();
+  });
   els.pulse.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-pulse]');
     if (!b) return;
     state.pulse = b.dataset.pulse; store.set('pulse', state.pulse);
-    renderTone(); updateToneAudio();
+    renderTone(); retuneVoice();
   });
-  els.engine.addEventListener('click', function (e) {
-    var b = e.target.closest('button[data-engine]');
-    if (!b) return;
-    state.iosEngine = b.dataset.engine; store.set('iosEngine', state.iosEngine);
-    renderTone();
-    if (state.playing) toneStart(); else updateToneAudio(); // inside the tap, so the new engine may start
-  });
-  els.carrierReset.addEventListener('click', function () {
-    state.carrier = DEFAULT_CARRIER; store.set('carrier', state.carrier);
-    renderTone(); updateToneAudio();
+  els.timerLen.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-min]');
+    if (b) timerSet(num(b.dataset.min, 0));
   });
 
   els.tabPlayer.addEventListener('click', function () { setTab('player'); });
   els.tabLibrary.addEventListener('click', function () { setTab('library'); });
 
-  Array.prototype.forEach.call(document.querySelectorAll('[data-add]'), function (b) {
+  each(document, '[data-add]', function (b) {
     b.addEventListener('click', function () { els.file.click(); });
   });
   els.file.addEventListener('change', function () {
@@ -1437,13 +1617,15 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     var li = btn.closest('.track'), id = li && li.dataset.id;
     if (!id) return;
     if (btn.dataset.action === 'play') {
-      if (id !== state.currentId) { if (setTrack(id)) playAll(); }
-      else if (state.playing && !els.music.paused) pauseAll();
-      else playAll(); // the tone may already be running while this track waits
+      if (!state.musicOn) { state.musicOn = true; store.set('musicOn', true); } // picking a track turns music back on
+      if (id !== state.currentId || leader !== 'track') { if (setTrack(id)) playAll(); }
+      else if (state.playing) pauseAll();
+      else playAll();
+      renderNowPlaying(); renderList();
       return;
     }
     if (li.classList.contains('confirming')) { clearTimeout(li._t); deleteTrack(id); return; }
-    Array.prototype.forEach.call(els.list.querySelectorAll('.confirming'), function (x) {
+    each(els.list, '.confirming', function (x) {
       x.classList.remove('confirming'); clearTimeout(x._t);
       var d = x.querySelector('.del'); d.innerHTML = TRASH; d.setAttribute('aria-label', 'Delete ' + (trackById(x.dataset.id) || {}).name);
     });
@@ -1463,9 +1645,10 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) return;
-    // Safari interrupts Web Audio while the page is hidden; pick it back up
-    if (state.playing && activeEngine === 'live' && ac && ac.state !== 'running') { try { ac.resume(); } catch (e) {} }
-    if (state.playing && els.music.paused && activeEngine !== 'live' && els.tone.paused) { state.playing = false; renderPlayState(); updateMediaSession(); }
+    if (state.playing && toneOn && ac && ac.state !== 'running') { try { ac.resume(); } catch (e) {} } // after a call or Siri
+    if (state.playing && els.music.paused && !switching) pauseAll(); // the player was stopped while we were away
+    timerTick();
+    renderTimer();
     if (state.tab === 'player') sizeScope();
     startScope();
   });
@@ -1484,12 +1667,11 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
     readColors();
     buildBands();
     setFill(els.seek);
-    renderVolumes(); renderToggles(); renderTone(); renderPlayState();
+    renderVolumes(); renderToggles(); renderTone(); renderPlayState(); renderTimer();
     setTab(location.hash === '#library' ? 'library' : state.tab);
     setupMediaSession();
     if (canSetVolume) els.music.volume = gain(state.volMusic);
     renderNowPlaying(); renderList();
-    if (toneEngine() === 'loop' && state.mode !== 'off') setTimeout(function () { if (!state.playing) buildTone(); }, 600);
 
     var load;
     try { load = dbAll(); } catch (e) { load = Promise.reject(e); }
@@ -1508,7 +1690,7 @@ input[type="range"]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;b
       rebuildOrder();
       if (state.currentId) setTrack(state.currentId);
       else if (state.tracks.length) setTrack(sortedTracks()[0].id);
-      renderList(); renderNowPlaying(); updateStorageInfo();
+      renderList(); renderNowPlaying(); updateStorageInfo(); updateMediaSession();
     });
   }
   var standalone = window.navigator.standalone === true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
