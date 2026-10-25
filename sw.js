@@ -1,7 +1,8 @@
 // Focus Player service worker: makes the app open offline.
 // After a bigger update, raise the number in CACHE so old files are cleared.
-const CACHE = 'focus-player-v2';
-const CORE = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
+const CACHE = 'focus-player-v3';
+const CORE = ['./', './index.html', './styles.css', './app.js', './db.js', './tone.js', './reorder.js',
+  './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 const NETWORK_WAIT = 3000; // ms to wait for a fresh copy before opening the saved one
 
 self.addEventListener('install', (e) => {
@@ -29,7 +30,7 @@ function putInCache(req, res) {
 // so a weak signal never holds up the launch. A late network answer still refreshes the cache.
 function networkWithTimeout(req) {
   const fromNetwork = fetch(req).then((res) => putInCache(req, res));
-  const fromCache = () => caches.match(req).then((hit) => hit || caches.match('./index.html'));
+  const fromCache = () => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match('./index.html'));
   return new Promise((resolve) => {
     let settled = false;
     const finish = (p) => p.then((r) => { if (!settled && r) { settled = true; resolve(r); } });
@@ -45,6 +46,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin === self.location.origin) {
+    if (url.protocol === 'blob:') return;
     e.respondWith(networkWithTimeout(req));
   } else if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
     // Fonts rarely change: cache first.
